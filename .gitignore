@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment Variables
+.env
+.env*.local
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Supabase temporary / local data
+backend/supabase/.temp/
+
+# OS files
+.DS_Store
+Thumbs.db
