@@ -9,7 +9,7 @@ Dinas Lingkungan Hidup (DLH) Kabupaten Kuningan
 | Status | Draf untuk implementasi |
 | Desain | Figma: https://www.figma.com/design/Tqb4iSo8Xo5D0cis2WwWuj/Untitled?node-id=3-2 (page "SILAPOR Prototype", 29 layar) |
 | Database | Supabase, project ref `wymulanaxgbbccbcbjnn` |
-| Dokumen pendamping | `BUILD_GUIDE.md`, `MASTER_PROMPT.md`, `0001_init_schema.sql` |
+| Dokumen pendamping | `BUILD_GUIDE.md`, `RESPONSIVE_SPEC.md`, `MASTER_PROMPT.md`, `0001_init_schema.sql` |
 
 ---
 
@@ -161,7 +161,7 @@ Catatan: layar yang bernomor "b" adalah **state error** dan wajib diimplementasi
 | Keamanan | RLS aktif di semua tabel; anon tanpa akses langsung ke tabel; service-role key hanya di server; security headers (CSP, X-Frame-Options, nosniff, Referrer-Policy, HSTS); validasi Zod di server; rate limit; unggahan divalidasi magic bytes |
 | Privasi | Data pribadi pelapor minimal dan terbatas; patuh prinsip UU PDP (tujuan jelas, akses terbatas, retensi) |
 | Performa | Halaman publik < 2,5 detik LCP pada 4G; gambar dikompres di klien sebelum unggah bila > 1,5 MB |
-| Perangkat | Sopir: Chrome Android 390 px; Kabid/Admin: desktop 1280 px; semua responsif |
+| Perangkat & responsif | **Semua layar responsif 320–1920 px** (HP, tablet, laptop, monitor lebar), mobile-first, tanpa scroll horizontal, target sentuh ≥ 44 px; acuan desain Figma 390 px dan 1280 px; detail di `RESPONSIVE_SPEC.md`. Sopir diprioritaskan di Chrome Android |
 | Aksesibilitas | Kontras teks ≥ 4,5:1 (token warna sudah dipilih untuk ini), label form jelas, fokus keyboard terlihat |
 | Bahasa | Seluruh UI Bahasa Indonesia |
 | Ketersediaan | Mengikuti SLA Supabase + hosting; cadangan database harian |

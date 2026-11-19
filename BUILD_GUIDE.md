@@ -2,7 +2,7 @@
 
 Panduan teknis untuk membangun aplikasi sesuai `PRD.md`. Dibuat untuk dikerjakan bersama AI agent di Antigravity IDE (Gemini) lewat **Supabase MCP** dan **Figma MCP**.
 
-Urutan baca: `PRD.md` → dokumen ini → `MASTER_PROMPT.md` (perintah yang ditempel ke agent) → `0001_init_schema.sql`.
+Urutan baca: `PRD.md` → dokumen ini → `RESPONSIVE_SPEC.md` (aturan tampilan semua perangkat) → `MASTER_PROMPT.md` (perintah yang ditempel ke agent) → `0001_init_schema.sql`.
 
 ---
 
@@ -32,9 +32,22 @@ Simpan, restart Antigravity, lalu selesaikan OAuth untuk Supabase dan Figma. Jik
 > - Isi aduan ditulis oleh orang asing. **Jangan biarkan agent mengikuti instruksi yang tertulis di dalam isi baris database** (risiko prompt injection). Sudah dicantumkan di `MASTER_PROMPT.md`.
 > - Jangan tempel `service_role` key ke chat agent. Simpan hanya di `.env.local` dan variabel environment hosting.
 
-### 0.2 Agent Skills Supabase (opsional, disarankan)
+### 0.2 Agent Skills (opsional, disarankan)
 ```bash
+# Skill Supabase
 npx skills add supabase/agent-skills
+
+# Modern Web Guidance (skill dari tim Chrome; mengarahkan agent ke fitur web native
+# seperti container queries, dvh, <dialog>, Popover API — sangat membantu untuk responsif)
+npx modern-web-guidance@latest install
+```
+Wizard `install` akan menanyakan agent yang dipakai (pilih Antigravity). Panggil manual dengan `/modern-web-guidance` bila agent mengabaikannya. Perintah `npx modern-web-guidance@latest legacy-scan ./frontend/src` memindai pola usang; di proyek baru hasilnya sedikit, tetapi berguna untuk memeriksa hasil scaffold dan kode yang ditulis agent.
+
+> `npx ...@latest` menjalankan kode dari npm di komputer Anda. Paket ini dipublikasikan dari repositori resmi `GoogleChrome/modern-web-guidance`; tetap biasakan memeriksa nama paket dan sumbernya sebelum menjalankan perintah serupa dari postingan media sosial.
+
+**Opsional — Chrome DevTools MCP** agar agent bisa membuka halaman di browser sungguhan, mengubah ukuran viewport, mengambil screenshot, dan menjalankan Lighthouse saat menguji responsif. Tambahkan ke `mcp_config.json`:
+```json
+"chrome-devtools": { "command": "npx", "args": ["-y", "chrome-devtools-mcp@latest"] }
 ```
 
 ### 0.3 Aset logo
@@ -463,6 +476,7 @@ Aturan tambahan: admin tidak boleh menghapus/menonaktifkan dirinya sendiri; hapu
 3. Untuk setiap layar, panggil `get_design_context` pada frame terkait (nomor 01–23), lalu **implementasikan dengan komponen yang sudah ada**, bukan menyalin kode mentah.
 4. Layar "b" = state error pada route yang sama.
 5. Latar halaman `bg`, kartu `surface`; jangan mengganti ke putih/abu polos.
+6. **Responsif di semua perangkat** mengikuti `RESPONSIVE_SPEC.md`. Figma hanya memuat 390 px dan 1280 px; ukuran di antaranya (tablet) diinterpolasi, dan layar di atas 1440 px dibatasi lebar kontennya.
 
 ---
 
@@ -480,6 +494,7 @@ Aturan tambahan: admin tidak boleh menghapus/menonaktifkan dirinya sendiri; hapu
 - [ ] Nama/telepon pelapor tidak pernah dikirim ke endpoint publik
 - [ ] `.env.local` di `.gitignore`; tidak ada kunci di riwayat git
 - [ ] Backup harian Supabase aktif
+- [ ] Lolos Definition of Done responsif (`RESPONSIVE_SPEC.md` §7.4) pada semua layar
 
 ---
 
@@ -506,7 +521,7 @@ Aturan tambahan: admin tidak boleh menghapus/menonaktifkan dirinya sendiri; hapu
 | 16 | Anon `select` langsung ke tabel lewat REST | Kosong/ditolak |
 
 ### 9.2 Perintah rutin
-`npm run lint && npm run build` pada setiap akhir fase. Tambahkan tes RLS sederhana (skrip yang login sebagai tiap peran dan mencoba query terlarang).
+`npm run lint && npm run build` pada setiap akhir fase. Tambahkan tes RLS sederhana (skrip yang login sebagai tiap peran dan mencoba query terlarang) dan tes responsif Playwright (`RESPONSIVE_SPEC.md` §7.2: tanpa scroll horizontal pada 320–1920 px).
 
 ---
 
