@@ -210,6 +210,20 @@ node scripts/test-responsive-audit.mjs
 
 ## 👥 Panduan Singkat per Peran
 
+### 🔑 Akun & Kredensial Pengujian (Default Seed)
+
+Untuk menguji aplikasi melalui halaman login (`/login`):
+
+| Peran (Aktor) | Username | Kata Sandi (Password) | Email Internal Supabase | Hak Akses Rute |
+| :--- | :--- | :--- | :--- | :--- |
+| **Administrator** | `admin` | `PasswordKuningan2026!` | `admin@silapor.local` | `/admin/*` (Armada, Pengguna, Retensi UU PDP) & `/kabid` |
+| **Kepala Bidang (Kabid)** | `kabid` | `PasswordKuningan2026!` | `kabid@silapor.local` | `/kabid/*` (Pemantauan Realtime, Galeri, Respon Aduan, Laporan) |
+| **Sopir Armada 1** | `sopir1` | `PasswordKuningan2026!` | `sopir1@silapor.local` | `/sopir/*` (Tugas Armada, Pelacakan GPS, Unggah Bukti) |
+| **Sopir Armada 2** | `sopir2` | `PasswordKuningan2026!` | `sopir2@silapor.local` | `/sopir/*` (Tugas Armada, Pelacakan GPS, Unggah Bukti) |
+
+> [!NOTE]
+> Pada form login (`/login`), cukup masukkan **Username** (bukan email) dan **Kata Sandi**.
+
 ### 1. Warga / Pelapor (Publik)
 1. Buka halaman utama atau klik menu **Buat Aduan**.
 2. Unggah foto tumpukan sampah, ketik lokasi patokan yang jelas, isi nama dan nomor telepon Anda.
