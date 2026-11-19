@@ -15,15 +15,17 @@ export function WhatsAppIcon({ className = 'w-4 h-4' }: { className?: string }) 
   );
 }
 
-interface KabariWAButtonProps {
+export interface KabariWAButtonProps {
   phone: string | null | undefined;
   namaPelapor: string;
   kodeTiket: string;
   status: 'baru' | 'diproses' | 'selesai' | 'ditolak';
   catatan?: string | null;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
+  variant?: 'solid' | 'soft' | 'outline' | 'ghost';
   className?: string;
   label?: string;
+  showIcon?: boolean;
 }
 
 export function KabariWAButton({
@@ -33,8 +35,10 @@ export function KabariWAButton({
   status,
   catatan,
   size = 'sm',
+  variant = 'solid',
   className = '',
   label = 'Kabari WA',
+  showIcon = true,
 }: KabariWAButtonProps) {
   if (!isWhatsAppAvailable(phone)) {
     return null;
@@ -58,28 +62,41 @@ export function KabariWAButton({
   if (!url) return null;
 
   const sizeStyles = {
+    xs: 'px-2 py-1 text-[11px] min-h-[30px] gap-1',
     sm: 'px-2.5 py-1.5 text-xs min-h-[36px] gap-1.5',
     md: 'px-3.5 py-2 text-xs sm:text-sm min-h-[44px] gap-2',
     lg: 'px-4 py-2.5 text-sm sm:text-base min-h-[48px] gap-2.5 font-bold',
   }[size];
 
   const iconSizes = {
+    xs: 'w-3 h-3',
     sm: 'w-3.5 h-3.5',
     md: 'w-4 h-4',
     lg: 'w-5 h-5',
   }[size];
+
+  const variantStyles = {
+    solid:
+      'bg-[#25D366] text-white hover:bg-[#20bd5a] shadow-2xs hover:shadow-xs active:scale-[0.98]',
+    soft:
+      'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 hover:text-emerald-900 border border-emerald-200/80 active:scale-[0.98]',
+    outline:
+      'bg-white text-emerald-700 hover:bg-emerald-50 border border-emerald-400 hover:border-emerald-500 active:scale-[0.98]',
+    ghost:
+      'bg-transparent text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 active:scale-[0.98]',
+  }[variant];
 
   return (
     <a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-flex items-center justify-center rounded-lg font-semibold bg-[#25D366] text-white hover:bg-[#20bd5a] active:scale-[0.98] transition-all shadow-2xs hover:shadow-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] shrink-0 ${sizeStyles} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] shrink-0 ${sizeStyles} ${variantStyles} ${className}`}
       title={`Kabari ${namaPelapor} via WhatsApp (${phone})`}
       aria-label={`Kabari ${namaPelapor} via WhatsApp`}
     >
-      <WhatsAppIcon className={iconSizes} />
-      <span>{label}</span>
+      {showIcon && <WhatsAppIcon className={iconSizes} />}
+      {label && <span>{label}</span>}
     </a>
   );
 }

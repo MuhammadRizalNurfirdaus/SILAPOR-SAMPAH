@@ -157,6 +157,7 @@ export default async function KabidDaftarAduanPage({ searchParams }: PageProps) 
             kodeTiket={item.kode_tiket}
             status={item.status}
             size="sm"
+            variant="soft"
           />
           <Link
             href={`/kabid/aduan/${item.id}`}

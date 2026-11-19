@@ -112,6 +112,20 @@ export default async function KabidDetailAduanPage({ params }: PageProps) {
             Dilaporkan pada {formatWIB(aduan.created_at)}
           </p>
         </div>
+
+        {/* Action Header: 1 Tombol Utama Elegan & Bersih */}
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <KabariWAButton
+            phone={aduan.no_telepon}
+            namaPelapor={aduan.nama_pelapor}
+            kodeTiket={aduan.kode_tiket}
+            status={aduan.status}
+            catatan={latestRespon?.catatan}
+            size="md"
+            variant="soft"
+            label="Kabari Warga via WA"
+          />
+        </div>
       </div>
 
       {/* Grid 2 Kolom (Desktop >= 1024px) / Ditumpuk di Mobile */}
@@ -158,13 +172,13 @@ export default async function KabidDetailAduanPage({ params }: PageProps) {
               </div>
 
               <div>
-                <span className="text-gray-400 block text-xs mb-1">Nomor Telepon:</span>
-                <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-gray-400 block text-xs mb-1">Nomor Kontak:</span>
+                <div className="flex items-center gap-2">
                   <a
                     href={`tel:${aduan.no_telepon}`}
-                    className="font-medium text-primary hover:underline flex items-center gap-1 min-h-[36px] px-2.5 py-1 bg-gray-50 rounded-lg border border-gray-200 text-xs"
+                    className="font-medium text-gray-800 hover:text-primary flex items-center gap-1.5 text-xs py-1"
                   >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
                     <span>{aduan.no_telepon}</span>
@@ -175,8 +189,9 @@ export default async function KabidDetailAduanPage({ params }: PageProps) {
                     kodeTiket={aduan.kode_tiket}
                     status={aduan.status}
                     catatan={latestRespon?.catatan}
-                    size="sm"
-                    label="Kabari WA 1-Klik"
+                    size="xs"
+                    variant="ghost"
+                    label="Chat WA"
                   />
                 </div>
               </div>
@@ -265,7 +280,7 @@ export default async function KabidDetailAduanPage({ params }: PageProps) {
                         {res.catatan}
                       </p>
 
-                      <div className="flex items-center justify-between gap-2 flex-wrap text-[11px] pt-1">
+                      <div className="flex items-center gap-1.5 text-[11px] pt-0.5">
                         {res.tampil_ke_publik ? (
                           <span className="text-emerald-700 font-medium flex items-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -277,16 +292,6 @@ export default async function KabidDetailAduanPage({ params }: PageProps) {
                             Catatan internal (rahasia)
                           </span>
                         )}
-
-                        <KabariWAButton
-                          phone={aduan.no_telepon}
-                          namaPelapor={aduan.nama_pelapor}
-                          kodeTiket={aduan.kode_tiket}
-                          status={res.status_baru}
-                          catatan={res.catatan}
-                          size="sm"
-                          label="Kirim Respon Ini ke WA"
-                        />
                       </div>
                     </div>
                   </div>

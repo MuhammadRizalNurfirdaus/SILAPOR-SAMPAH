@@ -96,23 +96,19 @@ export function FormResponAduan({
 
       {success && (
         <Alert type="success" title="Respon Berhasil Disimpan">
-          <div className="space-y-3">
-            <p className="text-xs sm:text-sm">{success}</p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+            <p className="text-xs text-emerald-800">{success}</p>
             {pelaporPhone && lastSubmitted && kodeTiket && (
-              <div className="pt-2 border-t border-emerald-200">
-                <span className="block text-xs font-medium text-emerald-900 mb-2">
-                  Teruskan kabar pembaruan status ke pelapor:
-                </span>
-                <KabariWAButton
-                  phone={pelaporPhone}
-                  namaPelapor={pelaporNama}
-                  kodeTiket={kodeTiket}
-                  status={lastSubmitted.statusBaru}
-                  catatan={lastSubmitted.catatan}
-                  size="md"
-                  label="Kabari Pelapor via WhatsApp Sekarang"
-                />
-              </div>
+              <KabariWAButton
+                phone={pelaporPhone}
+                namaPelapor={pelaporNama}
+                kodeTiket={kodeTiket}
+                status={lastSubmitted.statusBaru}
+                catatan={lastSubmitted.catatan}
+                size="sm"
+                variant="solid"
+                label="Kabari Warga via WA"
+              />
             )}
           </div>
         </Alert>
