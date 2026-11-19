@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/Badge';
 import { TableCard, Column } from '@/components/ui/TableCard';
 import { AduanFilterBar } from './AduanFilterBar';
 import { formatWIBShort } from '@/lib/format/date';
+import { KabariWAButton } from '@/components/ui/KabariWAButton';
 
 export const metadata: Metadata = {
   title: 'Daftar Aduan Masyarakat | SILAPOR SAMPAH DLH Kuningan',
@@ -149,12 +150,21 @@ export default async function KabidDaftarAduanPage({ searchParams }: PageProps) 
       header: 'Aksi',
       className: 'text-right',
       render: (item) => (
-        <Link
-          href={`/kabid/aduan/${item.id}`}
-          className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-white hover:bg-primary-dark transition-colors min-h-[36px]"
-        >
-          Lihat &amp; Respon
-        </Link>
+        <div className="flex items-center justify-end gap-1.5 flex-wrap">
+          <KabariWAButton
+            phone={item.no_telepon}
+            namaPelapor={item.nama_pelapor}
+            kodeTiket={item.kode_tiket}
+            status={item.status}
+            size="sm"
+          />
+          <Link
+            href={`/kabid/aduan/${item.id}`}
+            className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-white hover:bg-primary-dark transition-colors min-h-[36px]"
+          >
+            Lihat &amp; Respon
+          </Link>
+        </div>
       ),
     },
   ];
@@ -216,13 +226,21 @@ export default async function KabidDaftarAduanPage({ searchParams }: PageProps) 
               </div>
             </div>
 
-            <div className="pt-2 border-t border-gray-100">
+            <div className="pt-2 border-t border-gray-100 flex items-center gap-2">
+              <KabariWAButton
+                phone={item.no_telepon}
+                namaPelapor={item.nama_pelapor}
+                kodeTiket={item.kode_tiket}
+                status={item.status}
+                size="md"
+                className="flex-1"
+              />
               <Link
                 href={`/kabid/aduan/${item.id}`}
-                className="w-full flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-lg bg-primary hover:bg-primary-dark text-white text-xs font-semibold min-h-[44px] transition-colors shadow-xs"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-primary hover:bg-primary-dark text-white text-xs font-semibold min-h-[44px] transition-colors shadow-xs text-center"
               >
-                <span>Lihat Detail &amp; Respon</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span>Lihat Detail</span>
+                <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>

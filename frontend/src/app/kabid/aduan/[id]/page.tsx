@@ -7,6 +7,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { formatWIB } from '@/lib/format/date';
+import { KabariWAButton } from '@/components/ui/KabariWAButton';
 import { FormResponAduan } from './FormResponAduan';
 
 export const metadata: Metadata = {
@@ -75,6 +76,7 @@ export default async function KabidDetailAduanPage({ params }: PageProps) {
   }
 
   const responList = (responRows || []) as unknown as ResponItem[];
+  const latestRespon = responList.length > 0 ? responList[responList.length - 1] : null;
 
   // 3. Generate signed URL untuk foto aduan (300 detik = 5 menit)
   let fotoUrl = '/placeholder-image.png';
@@ -156,16 +158,27 @@ export default async function KabidDetailAduanPage({ params }: PageProps) {
               </div>
 
               <div>
-                <span className="text-gray-400 block text-xs">Nomor Telepon:</span>
-                <a
-                  href={`tel:${aduan.no_telepon}`}
-                  className="font-medium text-primary hover:underline flex items-center gap-1 min-h-[32px]"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                  </svg>
-                  {aduan.no_telepon}
-                </a>
+                <span className="text-gray-400 block text-xs mb-1">Nomor Telepon:</span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <a
+                    href={`tel:${aduan.no_telepon}`}
+                    className="font-medium text-primary hover:underline flex items-center gap-1 min-h-[36px] px-2.5 py-1 bg-gray-50 rounded-lg border border-gray-200 text-xs"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    <span>{aduan.no_telepon}</span>
+                  </a>
+                  <KabariWAButton
+                    phone={aduan.no_telepon}
+                    namaPelapor={aduan.nama_pelapor}
+                    kodeTiket={aduan.kode_tiket}
+                    status={aduan.status}
+                    catatan={latestRespon?.catatan}
+                    size="sm"
+                    label="Kabari WA 1-Klik"
+                  />
+                </div>
               </div>
 
               <div>
@@ -212,6 +225,9 @@ export default async function KabidDetailAduanPage({ params }: PageProps) {
             <FormResponAduan
               aduanId={aduan.id}
               currentStatus={aduan.status}
+              pelaporNama={aduan.nama_pelapor}
+              pelaporPhone={aduan.no_telepon}
+              kodeTiket={aduan.kode_tiket}
             />
           </Card>
 
@@ -249,7 +265,7 @@ export default async function KabidDetailAduanPage({ params }: PageProps) {
                         {res.catatan}
                       </p>
 
-                      <div className="flex items-center gap-1.5 text-[11px]">
+                      <div className="flex items-center justify-between gap-2 flex-wrap text-[11px] pt-1">
                         {res.tampil_ke_publik ? (
                           <span className="text-emerald-700 font-medium flex items-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -261,6 +277,16 @@ export default async function KabidDetailAduanPage({ params }: PageProps) {
                             Catatan internal (rahasia)
                           </span>
                         )}
+
+                        <KabariWAButton
+                          phone={aduan.no_telepon}
+                          namaPelapor={aduan.nama_pelapor}
+                          kodeTiket={aduan.kode_tiket}
+                          status={res.status_baru}
+                          catatan={res.catatan}
+                          size="sm"
+                          label="Kirim Respon Ini ke WA"
+                        />
                       </div>
                     </div>
                   </div>

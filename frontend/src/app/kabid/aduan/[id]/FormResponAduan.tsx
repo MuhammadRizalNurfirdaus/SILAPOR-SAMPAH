@@ -6,16 +6,23 @@ import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
 import { Alert } from '@/components/ui/Alert';
+import { KabariWAButton } from '@/components/ui/KabariWAButton';
 import { kirimResponAduanAction } from '@/app/kabid/actions';
 
 interface FormResponAduanProps {
   aduanId: string;
   currentStatus: 'baru' | 'diproses' | 'selesai' | 'ditolak';
+  pelaporNama?: string;
+  pelaporPhone?: string;
+  kodeTiket?: string;
 }
 
 export function FormResponAduan({
   aduanId,
   currentStatus,
+  pelaporNama = 'Masyarakat',
+  pelaporPhone,
+  kodeTiket,
 }: FormResponAduanProps) {
   const router = useRouter();
 
@@ -35,6 +42,10 @@ export function FormResponAduan({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [lastSubmitted, setLastSubmitted] = useState<{
+    statusBaru: 'diproses' | 'selesai' | 'ditolak';
+    catatan: string;
+  } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,16 +59,21 @@ export function FormResponAduan({
 
     setIsLoading(true);
     try {
+      const submittedCatatan = catatan.trim();
       const res = await kirimResponAduanAction({
         aduan_id: aduanId,
         status_baru: statusBaru,
-        catatan: catatan.trim(),
+        catatan: submittedCatatan,
         tampil_ke_publik: tampilKePublik,
       });
 
       if (!res.success) {
         setError(res.error || 'Gagal mengirim respon aduan.');
       } else {
+        setLastSubmitted({
+          statusBaru,
+          catatan: submittedCatatan,
+        });
         setSuccess('Respon berhasil dicatat dan status aduan diperbarui.');
         setCatatan('');
         router.refresh();
@@ -79,8 +95,26 @@ export function FormResponAduan({
       )}
 
       {success && (
-        <Alert type="success" title="Berhasil">
-          {success}
+        <Alert type="success" title="Respon Berhasil Disimpan">
+          <div className="space-y-3">
+            <p className="text-xs sm:text-sm">{success}</p>
+            {pelaporPhone && lastSubmitted && kodeTiket && (
+              <div className="pt-2 border-t border-emerald-200">
+                <span className="block text-xs font-medium text-emerald-900 mb-2">
+                  Teruskan kabar pembaruan status ke pelapor:
+                </span>
+                <KabariWAButton
+                  phone={pelaporPhone}
+                  namaPelapor={pelaporNama}
+                  kodeTiket={kodeTiket}
+                  status={lastSubmitted.statusBaru}
+                  catatan={lastSubmitted.catatan}
+                  size="md"
+                  label="Kabari Pelapor via WhatsApp Sekarang"
+                />
+              </div>
+            )}
+          </div>
         </Alert>
       )}
 

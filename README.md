@@ -45,6 +45,7 @@ Sistem menerapkan **Role-Based Access Control (RBAC)** ketat dengan 4 jenis akse
 - **Pemantauan Operasional (Layar 11)**: Kartu statistik ringkasan (unit beroperasi, garasi, perawatan, ritasi hari ini, aduan baru), daftar perjalanan aktif, dan peta armada Realtime via Supabase Realtime channel.
 - **Galeri Bukti Pengangkutan (Layar 12)**: Grid dokumentasi visual dengan signed URL berumur pendek (≤ 5 menit), filter tanggal, armada, dan sopir, serta modal Lightbox layar penuh dengan gestur sentuh (swipe) & keyboard.
 - **Daftar & Detail Aduan (Layar 13/14)**: Manajemen aduan masuk, filter status dan tanggal, tampilan kartu di HP & tabel di desktop, serta form respon yang otomatis memperbarui status aduan via trigger database.
+- **Fitur "Kabari WA" 1-Klik**: Tombol langsung di setiap baris antrean aduan, detail aduan, dan notifikasi pasca-respon untuk mengabari pelapor via WhatsApp Web/App dengan pesan otomatis resmi yang rapi memuat salam resmi DLH Kuningan, kode tiket, status tindak lanjut, catatan petugas, serta tautan pelacakan status warga.
 - **Laporan & Ekspor Excel (Layar 15/15b)**: Ekspor rekapitulasi data 2 sheet (*Aduan* dan *Perjalanan & Bukti*) ke format `.xlsx` (ExcelJS), pembatasan 10.000 baris, dan penanganan status error Layar 15b.
 
 ### 4. Administrator (DLH Kuningan)
@@ -197,6 +198,9 @@ node scripts/test-uat-fase7.mjs
 
 # UAT Retensi Data Identitas Warga (Kepatuhan UU No. 27/2022 PDP)
 node scripts/test-uupdp-retensi.mjs
+
+# UAT Fitur "Kabari WA" 1-Klik Modul Kabid
+node scripts/test-kabari-wa.mjs
 
 # Audit Responsif Matriks 10 Resolusi (320–1920 px Tanpa Overflow)
 node scripts/test-responsive-audit.mjs
