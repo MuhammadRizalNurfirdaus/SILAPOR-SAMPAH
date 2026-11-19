@@ -50,7 +50,8 @@ Sistem menerapkan **Role-Based Access Control (RBAC)** ketat dengan 4 jenis akse
 ### 4. Administrator (DLH Kuningan)
 - **Kelola Armada (Layar 16–19)**: CRUD armada kendaraan sampah (Dump Truck, Armroll, Compactor, Pickup, dll.). Plat nomor otomatis kapital dan unik. Penghapusan armada yang memiliki riwayat operasional menerapkan **Soft Delete** (`is_active = false`) agar integritas riwayat tetap utuh.
 - **Kelola Pengguna (Layar 20–23)**: CRUD akun petugas lapangan dan pimpinan via Supabase Auth Admin API. Proteksi sistem: Administrator tidak dapat menghapus atau menonaktifkan akun miliknya sendiri.
-- **Audit Logging**: Setiap tindakan administratif (buat/ubah/hapus armada dan akun) dicatat permanen ke tabel `audit_log`.
+- **Retensi Data Identitas Warga (UU No. 27/2022 PDP)**: Kebijakan perlindungan privasi otomatis dan manual. Aduan masyarakat yang telah selesai lebih dari 2 tahun secara otomatis (via background cron harian) maupun manual dianonimkan (nama diubah menjadi *Masyarakat (Anonim UU PDP)*, nomor telepon menjadi *080000000000*, dan IP hash dikosongkan) guna memenuhi ketentuan UU Pelindungan Data Pribadi.
+- **Audit Logging**: Setiap tindakan administratif (buat/ubah/hapus armada dan akun, serta eksekusi retensi data) dicatat permanen ke tabel `audit_log`.
 
 ---
 
@@ -194,6 +195,9 @@ node scripts/test-uat-fase6.mjs
 # UAT Modul Admin, Soft Delete & Proteksi Diri (UAT 13–15)
 node scripts/test-uat-fase7.mjs
 
+# UAT Retensi Data Identitas Warga (Kepatuhan UU No. 27/2022 PDP)
+node scripts/test-uupdp-retensi.mjs
+
 # Audit Responsif Matriks 10 Resolusi (320–1920 px Tanpa Overflow)
 node scripts/test-responsive-audit.mjs
 ```
@@ -274,7 +278,7 @@ Aplikasi memenuhi seluruh poin standar keamanan **BUILD_GUIDE §8**:
 ## ❓ Pertanyaan Terbuka untuk DLH Kabupaten Kuningan
 
 Berikut adalah beberapa poin pertimbangan operasional lanjutan yang diserahkan kepada pihak manajemen DLH Kuningan:
-1. **Kebijakan Retensi Data Privasi (UU PDP)**: Apakah data identitas warga (nama & nomor HP) pada aduan yang sudah berstatus `selesai` lebih dari 2 tahun perlu dilakukan pembersihan otomatis (*anonymization / purging*)?
+1. ~~**Kebijakan Retensi Data Privasi (UU PDP)**~~: **Telah diimplementasikan penuh** dengan skema pembersihan otomatis via Vercel Cron harian (`0 2 * * *` / 09:00 WIB) dan panel eksekusi manual administrator di `/admin/retensi` dengan batas usia 2 tahun.
 2. **Koneksi GPS Lapangan**: Sebagian wilayah pedesaan di Kabupaten Kuningan memiliki kendala sinyal seluler (*blank spot*). Aplikasi telah mendukung toleransi offline di mana sopir tetap dapat mengambil foto dan menyelesaikan tugas dengan peringatan GPS. Apakah diperlukan sinkronisasi antrean offline lokal (*background sync*) jika sopir berada di area tanpa sinyal lebih dari 30 menit?
 3. **Struktur Pengelola Akun**: Apakah akun admin master dipegang oleh Tim IT Dinas Kominfo Kuningan atau langsung oleh staf bagian kepegawaian DLH?
 

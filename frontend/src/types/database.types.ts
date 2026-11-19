@@ -387,6 +387,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      anonimkan_aduan_kadaluwarsa: {
+        Args: { p_tahun?: number }
+        Returns: {
+          jumlah_dianonimkan: number
+        }[]
+      }
       akhiri_perjalanan: {
         Args: { p_perjalanan_id: string; p_ringkasan?: string }
         Returns: undefined

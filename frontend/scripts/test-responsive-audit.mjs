@@ -171,7 +171,7 @@ async function main() {
   const adminCookies = await getAuthCookies('admin@silapor.local');
   const contextAdmin = await browser.newContext();
   await contextAdmin.addCookies(adminCookies);
-  const adminRoutes = ['/admin/armada', '/admin/pengguna'];
+  const adminRoutes = ['/admin/armada', '/admin/pengguna', '/admin/retensi'];
 
   for (const route of adminRoutes) {
     const page = await contextAdmin.newPage();

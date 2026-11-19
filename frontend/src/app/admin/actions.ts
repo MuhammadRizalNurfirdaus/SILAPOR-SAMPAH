@@ -485,3 +485,63 @@ export async function hapusPenggunaAction(id: string) {
     return { success: false, error: msg };
   }
 }
+
+// ==========================================
+// 3. ACTIONS RETENSI DATA IDENTITAS WARGA (UU NO. 27/2022 PDP)
+// ==========================================
+
+export async function jalankanRetensiAction(tahun: number = 2) {
+  try {
+    const { user: admin } = await requireRole(['admin']);
+
+    // Validasi parameter tahun (default 2 tahun sesuai UU PDP)
+    const tahunValid = Math.max(1, Math.min(10, Math.floor(tahun)));
+
+    // Panggil fungsi database yang menganonimkan aduan selesai > N tahun
+    // ponytail: rpc anonimkan_aduan_kadaluwarsa returns table(jumlah_dianonimkan int)
+    const { data, error } = await supabaseAdmin.rpc('anonimkan_aduan_kadaluwarsa', {
+      p_tahun: tahunValid,
+    });
+
+    if (error) {
+      return {
+        success: false,
+        error: 'Gagal menjalankan pembersihan UU PDP: ' + error.message,
+      };
+    }
+
+    const count =
+      data && Array.isArray(data) && data.length > 0
+        ? data[0].jumlah_dianonimkan
+        : 0;
+
+    // Catat audit log untuk eksekusi manual oleh admin
+    await supabaseAdmin.from('audit_log').insert({
+      actor_id: admin.id,
+      aksi: 'aduan.retensi_uupdp_manual',
+      entitas: 'aduan',
+      detail: {
+        tahun_retensi: tahunValid,
+        jumlah_dianonimkan: count,
+        dieksekusi_oleh: admin.id,
+      },
+    });
+
+    revalidatePath('/admin');
+    revalidatePath('/admin/retensi');
+    revalidatePath('/kabid/aduan');
+
+    return {
+      success: true,
+      count,
+      message:
+        count > 0
+          ? `Pembersihan berhasil. Sebanyak ${count} data aduan warga (> ${tahunValid} tahun) berhasil dianonimkan sesuai UU PDP.`
+          : `Pemeriksaan selesai. Tidak ada data aduan warga (> ${tahunValid} tahun) yang perlu dianonimkan saat ini.`,
+    };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Terjadi kesalahan sistem';
+    return { success: false, error: msg };
+  }
+}
+
