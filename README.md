@@ -1,255 +1,283 @@
-# SILAPOR SAMPAH (Sistem Informasi Layanan Laporan Sampah)
+# SILAPOR SAMPAH (Sistem Lapor dan Pemantauan Pengangkutan Sampah)
+### Dinas Lingkungan Hidup Kabupaten Kuningan
 
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.4-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-Database%20%26%20Auth-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com/)
+[![Leaflet](https://img.shields.io/badge/Leaflet-Realtime%20Maps-199900?style=for-the-badge&logo=leaflet)](https://leafletjs.com/)
 
-Aplikasi sistem informasi berbasis web yang dikembangkan untuk **Dinas Lingkungan Hidup (DLH) Kabupaten Kuningan** guna memudahkan masyarakat melaporkan titik timbulan sampah liar secara cepat dan transparan, serta mengoptimalkan operasional penugasan armada pengangkutan sampah oleh petugas/kru di lapangan.
+Aplikasi web modern, mobile-first, dan responsif (320–1920 px) yang dikembangkan untuk **Dinas Lingkungan Hidup (DLH) Kabupaten Kuningan** guna memudahkan masyarakat melaporkan titik timbulan sampah liar secara transparan, serta mengoptimalkan operasional dan pemantauan penugasan armada pengangkutan sampah secara realtime.
 
 ---
 
 ## Daftar Isi
-- [Fitur Utama](#-fitur-utama)
-- [Arsitektur & Tumpukan Teknologi](#-arsitektur--tumpukan-teknologi)
-- [Struktur Folder](#-struktur-folder)
-- [Prasyarat Sistem](#-prasyarat-sistem)
-- [Panduan Instalasi & Penggunaan](#-panduan-instalasi--penggunaan)
+- [Peran & Fitur Utama](#-peran--fitur-utama)
+- [Tumpukan Teknologi](#-tumpukan-teknologi)
+- [Struktur Proyek](#-struktur-proyek)
+- [Prasyarat & Instalasi](#-prasyarat--instalasi)
 - [Environment Variables](#-environment-variables)
-- [Daftar Perintah (NPM Scripts)](#-daftar-perintah-npm-scripts)
-- [Keamanan & Proteksi Abuse](#-keamanan--proteksi-abuse)
-- [Kontribusi & Lisensi](#-lisensi)
+- [Daftar Perintah (NPM Scripts & UAT)](#-daftar-perintah)
+- [Panduan Singkat Pengguna per Peran](#-panduan-singkat-per-peran)
+- [Checklist Keamanan & Proteksi Sistem](#-checklist-keamanan)
+- [Panduan Deployment ke Vercel](#-panduan-deployment-ke-vercel)
+- [Pertanyaan Terbuka untuk DLH Kuningan](#-pertanyaan-terbuka-untuk-dlh)
 
 ---
 
-## Fitur Utama
+## 🚀 Peran & Fitur Utama
 
-Berdasarkan analisis kebutuhan sistem (Role-Based Access Control / RBAC):
+Sistem menerapkan **Role-Based Access Control (RBAC)** ketat dengan 4 jenis akses:
 
-### 1. Akses Publik (Masyarakat)
-- **Pelaporan Sampah Liar**: Formulir pelaporan cepat dengan titik lokasi, deskripsi kondisi, dan unggahan foto bukti.
-- **Kompresi Gambar Otomatis**: Foto dikompresi otomatis di sisi browser sebelum diunggah (batas maksimal 5 MB).
-- **Anti-Bot & Spam**: Terlindungi dengan verifikasi Cloudflare Turnstile.
-- **Pelacakan Status Real-Time**: Warga dapat memantau status aduan (*Menunggu Verifikasi*, *Dijadwalkan*, *Sedang Diangkut*, hingga *Selesai*).
+### 1. Publik (Masyarakat Kuningan) — Tanpa Akun
+- **Buat Aduan Sampah (Layar 04/04b/05)**: Formulir laporan titik sampah dilengkapi foto bukti (kompresi otomatis di klien), deskripsi lokasi, koordinat GPS (opsional), proteksi Cloudflare Turnstile, honeypot, dan rate limit.
+- **Kode Tiket Instan**: Tiket acak format `SLP-YYMM-XXXXXXXX` diterbitkan langsung untuk warga.
+- **Cek Status Aduan (Layar 06/06b)**: Pantau perkembangan aduan secara transparan beserta catatan tindak lanjut dari petugas DLH.
+- **Peta Armada Publik (Layar 03)**: Memantau armada pengangkut yang sedang beroperasi dengan plat nomor disamarkan untuk privasi (`E **** **`) dan pembaruan berkala 15 detik.
 
-### 2. Administrator (DLH Kabupaten Kuningan)
-- **Manajemen Aduan**: Verifikasi validitas laporan masyarakat yang masuk.
-- **Penjadwalan Armada & Kru**: Disposisi penugasan pengangkutan ke armada truk dan sopir/kru terkait.
-- **Monitoring & Statistik**: Dashboard pemantauan volume laporan dan sebaran wilayah timbulan sampah.
-- **Ekspor Rekap Laporan**: Unduh rekapitulasi data laporan penanganan sampah dalam format Microsoft Excel (`.xlsx`).
+### 2. Sopir (Pengemudi Armada Lapangan) — Mobile Priority
+- **Dashboard Tugas (Layar 07)**: Memilih unit armada yang berstatus `garasi` (armada `perawatan` otomatis disembunyikan).
+- **Perjalanan Aktif (Layar 08)**: Memulai perjalanan via RPC database atomik, pengiriman koordinat GPS otomatis tiap 30 detik, durasi perjalanan dinamis, dan Screen Wake Lock API agar layar tidak mati saat bertugas.
+- **Unggah Bukti Lapangan (Layar 09/09b)**: Mengambil foto hasil pengangkutan langsung dari kamera/galeri, kompresi browser otomatis, dan penyimpanan aman ke bucket privat Supabase Storage.
+- **Akhiri Perjalanan (Layar 10)**: Validasi ketat wajib memiliki minimal 1 foto bukti penanganan sebelum perjalanan dapat diakhiri dan status armada kembali ke `garasi`.
 
-### 3. Petugas Lapangan (Sopir / Kru Angkut)
-- **Daftar Tugas Pengangkutan**: Melihat penugasan rute dan titik penjemputan sampah harian.
-- **Unggah Bukti Penanganan**: Mengunggah foto hasil pembersihan sampah di lapangan sebagai bukti penyelesaian tugas ke Cloud Storage.
+### 3. Kepala Bidang (Kabid Pengelolaan Sampah)
+- **Pemantauan Operasional (Layar 11)**: Kartu statistik ringkasan (unit beroperasi, garasi, perawatan, ritasi hari ini, aduan baru), daftar perjalanan aktif, dan peta armada Realtime via Supabase Realtime channel.
+- **Galeri Bukti Pengangkutan (Layar 12)**: Grid dokumentasi visual dengan signed URL berumur pendek (≤ 5 menit), filter tanggal, armada, dan sopir, serta modal Lightbox layar penuh dengan gestur sentuh (swipe) & keyboard.
+- **Daftar & Detail Aduan (Layar 13/14)**: Manajemen aduan masuk, filter status dan tanggal, tampilan kartu di HP & tabel di desktop, serta form respon yang otomatis memperbarui status aduan via trigger database.
+- **Laporan & Ekspor Excel (Layar 15/15b)**: Ekspor rekapitulasi data 2 sheet (*Aduan* dan *Perjalanan & Bukti*) ke format `.xlsx` (ExcelJS), pembatasan 10.000 baris, dan penanganan status error Layar 15b.
+
+### 4. Administrator (DLH Kuningan)
+- **Kelola Armada (Layar 16–19)**: CRUD armada kendaraan sampah (Dump Truck, Armroll, Compactor, Pickup, dll.). Plat nomor otomatis kapital dan unik. Penghapusan armada yang memiliki riwayat operasional menerapkan **Soft Delete** (`is_active = false`) agar integritas riwayat tetap utuh.
+- **Kelola Pengguna (Layar 20–23)**: CRUD akun petugas lapangan dan pimpinan via Supabase Auth Admin API. Proteksi sistem: Administrator tidak dapat menghapus atau menonaktifkan akun miliknya sendiri.
+- **Audit Logging**: Setiap tindakan administratif (buat/ubah/hapus armada dan akun) dicatat permanen ke tabel `audit_log`.
 
 ---
 
-## Arsitektur & Tumpukan Teknologi
+## 🛠 Tumpukan Teknologi
 
-| Komponen | Teknologi | Keterangan |
+| Lapisan | Teknologi | Keterangan |
 |---|---|---|
-| **Frontend Framework** | **Next.js 16** (App Router, Turbopack) | Server-Side Rendering (SSR) & React Server Components |
-| **Bahasa Pemrograman** | **TypeScript** | *Type safety* penuh dari basis data hingga UI |
-| **Styling & Desain** | **Tailwind CSS v4** | Desain responsif (*mobile-friendly*) |
-| **Backend & Database** | **Supabase** (PostgreSQL 17) | BaaS: Auth, Database PostgreSQL, Row Level Security (RLS) |
-| **Penyimpanan Berkas** | **Supabase Storage** | Bucket `bukti-pengangkutan` khusus gambar (JPEG, PNG, WebP) |
-| **Kompresi Gambar** | `browser-image-compression` | Mereduksi ukuran foto tanpa mengurangi kualitas signifikan |
-| **Ekspor Data** | `exceljs` | Pembuatan laporan spreadsheet `.xlsx` terstruktur |
-| **Rate Limiter & DDoS** | `@upstash/ratelimit` & `@upstash/redis` | Pembatasan frekuensi request per alamat IP |
-| **Anti-Bot CAPTCHA** | `@marsidev/react-turnstile` | Proteksi bot tak kasat mata pada formulir publik dan login |
+| **Framework** | Next.js 16.4 (App Router & Turbopack) | Server Components, Server Actions, Route Handlers |
+| **Bahasa** | TypeScript 5.9 | Tipe skema database terintegrasi otomatis |
+| **Styling** | Tailwind CSS v4 & Lucide Icons | Token warna resmi DLH, mobile-first, fluid layout |
+| **Database & Auth** | Supabase (PostgreSQL 17) | RLS, Triggers, Stored Procedures, Realtime Pub/Sub |
+| **Peta Digital** | Leaflet & OpenStreetMap | Dynamic import SSR:false, touch gestures, custom marker |
+| **Ekspor Berkas** | ExcelJS | Multi-sheet spreadsheet generator dengan limit 10k baris |
+| **Validasi & Proteksi** | Zod v4, Cloudflare Turnstile, Sharp/Magic Bytes | Validasi MIME type, anti-bot, IP rate limit |
 
 ---
 
-## Struktur Folder
+## 📂 Struktur Proyek
 
 ```text
 SILAPOR-SAMPAH/
-├── frontend/                     # Kode sumber aplikasi frontend (Next.js)
-│   ├── public/                   # Aset publik statis (logo, favicon)
-│   ├── src/
-│   │   ├── app/                  # Rute halaman Next.js App Router
-│   │   ├── lib/
-│   │   │   └── supabase/         # Klien Supabase (client.ts & server.ts)
-│   │   ├── types/
-│   │   │   └── database.types.ts # Definisi tipe TypeScript skema Supabase
-│   │   └── middleware.ts         # Middleware keamanan & rate limiting
-│   ├── next.config.ts            # Konfigurasi Turbopack & Security Headers
-│   ├── package.json              # Dependensi frontend
-│   └── .env.local                # Variabel lingkungan frontend (tidak di-commit)
-├── backend/                      # Konfigurasi Supabase & skema database
-│   ├── supabase/
-│   │   ├── config.toml           # Konfigurasi lokal, captcha, dan rate limit auth
-│   │   └── migrations/           # Riwayat migrasi SQL & bucket storage
-│   ├── tsconfig.json             # Konfigurasi TypeScript backend
-│   └── package.json              # Dependensi Supabase CLI & tools backend
-├── .agents/                      # Supabase Agent Skills untuk AI assistant
-├── .gitignore                    # Berkas dan folder yang diabaikan Git
-├── framework.md                  # Dokumentasi panduan teknis proyek
-└── package.json                  # Root monorepo scripts (dev:all, build, dll.)
+├── 0001_init_schema.sql       # Skema awal database PostgreSQL (Prosedur, RLS, Storage)
+├── 0002_advisors_fixes.sql     # Index foreign keys & pengerasan search_path
+├── 0003_grant_authenticated.sql# Izin eksekusi RPC helper authenticated
+├── PRD.md                      # Dokumen Kebutuhan Produk (23 Layar + States)
+├── BUILD_GUIDE.md              # Panduan Arsitektur, Endpoint, & UAT
+├── RESPONSIVE_SPEC.md          # Spesifikasi Responsif 320–1920 px & DoD
+├── MASTER_PROMPT.md            # Workflow Fase 0–8 pengembangan sistem
+├── README.md                   # Dokumentasi teknis dan operasional sistem
+└── frontend/                   # Aplikasi Next.js App Router
+    ├── scripts/                # Skrip pengujian otomatis UAT Fase 1–8
+    │   ├── seed-and-test-auth.mjs
+    │   ├── test-rls.mjs
+    │   ├── test-uat-fase3.mjs
+    │   ├── test-uat-fase4.mjs
+    │   ├── test-fase5-peta.mjs
+    │   ├── test-uat-fase6.mjs
+    │   ├── test-uat-fase7.mjs
+    │   └── test-responsive-audit.mjs
+    └── src/
+        ├── app/
+        │   ├── (public)        # Beranda (/), Buat Aduan (/aduan/baru), Cek Status, Peta
+        │   ├── sopir/          # Portal Sopir (/sopir, /sopir/perjalanan, bukti, akhiri)
+        │   ├── kabid/          # Modul Kabid (pemantauan, galeri, aduan, laporan)
+        │   ├── admin/          # Modul Admin (kelola armada, kelola pengguna)
+        │   ├── login/          # Autentikasi staf & pesan kesalahan generik
+        │   └── api/            # Route Handlers (/api/aduan, cek-status, laporan, dll.)
+        ├── components/
+        │   ├── layout/         # HeaderDLH, Navbar, SopirNav, KabidNav, AdminNav
+        │   ├── map/            # Leaflet client wrappers & Realtime tracking
+        │   └── ui/             # Button, Input, Select, Textarea, Card, Badge, Dialog, TableCard
+        ├── lib/
+        │   ├── auth/           # Guard peran (requireRole), email mapping staf
+        │   ├── format/         # Helper zona waktu WIB (Asia/Jakarta)
+        │   ├── supabase/       # Klien browser, server (cookies), & admin (service role)
+        │   └── validation/     # Skema validasi Zod & magic bytes gambar
+        └── proxy.ts            # Next.js 16 Edge Proxy untuk route protection & role redirection
 ```
 
 ---
 
-## Prasyarat Sistem
+## ⚙️ Prasyarat & Instalasi
 
-Sebelum memulai instalasi, pastikan perangkat Anda telah terpasang:
-- **Node.js**: versi LTS (disarankan v20.9.0 atau yang lebih baru). Cek dengan: `node -v`
-- **npm**: versi 10+ atau yang sesuai dengan Node.js. Cek dengan: `npm -v`
-- **Git**: untuk mengkloning repositori. Cek dengan: `git --version`
+### 1. Prasyarat
+- Node.js versi 20.x atau 22.x+
+- NPM atau PNPM
+- Proyek Supabase aktif (PostgreSQL 17)
 
----
-
-## Panduan Instalasi & Penggunaan
-
-### 1. Kloning Repositori
-Buka terminal dan jalankan perintah:
-
+### 2. Langkah Pemasangan
 ```bash
-git clone https://github.com/MuhammadRizalNurfirdaus/SILAPOR-SAMPAH.git
-cd SILAPOR-SAMPAH
-```
+# Clone repositori
+git clone https://github.com/<organisasi>/SILAPOR-SAMPAH.git
+cd SILAPOR-SAMPAH/frontend
 
-### 2. Pasang Seluruh Dependensi
-
-Instal dependensi pada root, frontend, dan backend:
-
-```bash
-# 1. Instal dependensi root (concurrently, dsb.)
+# Pasang dependensi
 npm install
 
-# 2. Instal dependensi frontend
-cd frontend && npm install && cd ..
-
-# 3. Instal dependensi backend
-cd backend && npm install && cd ..
+# Buat file konfigurasi lingkungan lokal
+cp .env.local.example .env.local
 ```
 
-### 3. Konfigurasi Environment Variables
+---
 
-Salin berkas contoh konfigurasi di folder `frontend/`:
+## 🔑 Environment Variables
 
-```bash
-cp frontend/.env.local.example frontend/.env.local
-```
-
-Buka file `frontend/.env.local` dan sesuaikan nilainya dengan kredensial project Supabase dan layanan pendukung Anda:
+Pastikan file `frontend/.env.local` telah terisi:
 
 ```env
 # Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key-dari-dashboard-supabase>
+NEXT_PUBLIC_SUPABASE_URL="https://<project-ref>.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="<supabase-anon-key>"
+SUPABASE_SERVICE_ROLE_KEY="<supabase-service-role-key>" # HANYA DI SERVER, JANGAN DIBOCORKAN!
 
-# Rate Limiting (Upstash Redis) - Opsional di lokal
-UPSTASH_REDIS_REST_URL=https://<id>.upstash.io
-UPSTASH_REDIS_REST_TOKEN=<token>
+# Cloudflare Turnstile (Anti-Bot)
+NEXT_PUBLIC_TURNSTILE_SITE_KEY="1x00000000000000000000AA" # Kunci testing dummy lokal
+TURNSTILE_SECRET_KEY="1x0000000000000000000000000000000AA"
 
-# Anti-Bot (Cloudflare Turnstile) - Opsional di lokal
-NEXT_PUBLIC_TURNSTILE_SITE_KEY=<site-key>
-TURNSTILE_SECRET_KEY=<secret-key>
+# Hash Salt untuk Anonimisasi IP Pelapor
+IP_HASH_SALT="kuningan-silapor-secret-salt-2026"
 ```
 
-> **Catatan:** Middleware telah dirancang secara fleksibel (*graceful fallback*). Jika kredensial Upstash/Turnstile belum diisi saat tahap *development* awal, aplikasi tetap dapat berjalan normal tanpa crash.
+---
 
-### 4. Menjalankan Aplikasi
+## 💻 Daftar Perintah
 
-Jalankan perintah berikut langsung dari direktori root:
+Jalankan perintah dari folder `frontend`:
 
 ```bash
-npm run dev:all
-# atau
+# Menjalankan server development (port 3002)
 npm run dev
-```
 
-Buka browser dan akses aplikasi pada alamat:
-👉 **`http://localhost:3002`**
-
-*(Port diset ke `3002` secara default untuk mencegah bentrok dengan aplikasi lain yang menggunakan port `3000`/`3001`).*
-
----
-
-## Environment Variables
-
-| Variabel | Keterangan | Wajib? |
-|---|---|:---:|
-| `NEXT_PUBLIC_SUPABASE_URL` | URL endpoint API Supabase project | **Ya** |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public Anon JWT key Supabase | **Ya** |
-| `SUPABASE_SERVICE_ROLE_KEY` | Private Service Role key (hanya untuk server-side/admin) | Opsional |
-| `UPSTASH_REDIS_REST_URL` | REST URL Redis Upstash untuk rate limiter | Opsional |
-| `UPSTASH_REDIS_REST_TOKEN` | REST Token Redis Upstash | Opsional |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Public Site Key Cloudflare Turnstile CAPTCHA | Opsional |
-| `TURNSTILE_SECRET_KEY` | Secret Key Cloudflare Turnstile untuk validasi server | Opsional |
-
----
-
-## Daftar Perintah (NPM Scripts)
-
-Eksekusi perintah-perintah ini dari root folder proyek:
-
-```bash
-# Menjalankan server development Next.js di http://localhost:3002
-npm run dev:all
-
-# Melakukan kompilasi build produksi frontend
-npm run build
-
-# Menjalankan server produksi hasil build
-npm run start
-
-# Menjalankan pemeriksaan kode ESLint
+# Pemeriksaan linter ESLint (wajib 0 error sebelum commit)
 npm run lint
 
-# Menghasilkan (generate) tipe TypeScript skema Supabase otomatis
-npm run supabase:types
+# Kompilasi build produksi Next.js
+npm run build
 
-# Melihat status koneksi Supabase
-npm run supabase:status
+# Menjalankan server produksi
+npm run start
+```
+
+### Eksekusi Pengujian Skenario UAT Otomatis
+
+```bash
+# UAT Autentikasi & RLS Database (UAT 5, 6, 16)
+node scripts/seed-and-test-auth.mjs
+node scripts/test-rls.mjs
+
+# UAT Halaman Publik & Validasi Aduan (UAT 1–4)
+node scripts/test-uat-fase3.mjs
+
+# UAT Modul Sopir & Storage Bukti Foto (UAT 7–10)
+node scripts/test-uat-fase4.mjs
+
+# UAT Peta Armada & Realtime (Fase 5)
+node scripts/test-fase5-peta.mjs
+
+# UAT Modul Kabid, Respon Aduan & Ekspor Excel (UAT 11–12)
+node scripts/test-uat-fase6.mjs
+
+# UAT Modul Admin, Soft Delete & Proteksi Diri (UAT 13–15)
+node scripts/test-uat-fase7.mjs
+
+# Audit Responsif Matriks 10 Resolusi (320–1920 px Tanpa Overflow)
+node scripts/test-responsive-audit.mjs
 ```
 
 ---
 
-## Keamanan & Proteksi Abuse
+## 👥 Panduan Singkat per Peran
 
-Aplikasi ini mengimplementasikan prinsip *defense-in-depth* untuk menjaga integritas data dan ketersediaan layanan publik:
+### 1. Warga / Pelapor (Publik)
+1. Buka halaman utama atau klik menu **Buat Aduan**.
+2. Unggah foto tumpukan sampah, ketik lokasi patokan yang jelas, isi nama dan nomor telepon Anda.
+3. Centang verifikasi Turnstile, lalu klik **Kirim Laporan Aduan**.
+4. Simpan **Kode Tiket** yang tampil di layar (misal: `SLP-2611-XXXXXXXX`).
+5. Pantau tindak lanjut petugas di menu **Cek Status**.
 
-1. **Security Headers**:
-   - `X-Frame-Options: DENY` (mencegah *clickjacking*).
-   - `X-Content-Type-Options: nosniff` (mencegah *MIME sniffing*).
-   - `Referrer-Policy: strict-origin-when-cross-origin`.
-   - `Strict-Transport-Security` (HSTS).
-2. **Server Actions Size Limit**: Dibatasi maksimal 5 MB selaras dengan batasan berkas foto bukti.
-3. **Application Rate Limiting**:
-   - Pembatasan umum: 60 request/menit per IP.
-   - Pembatasan rute autentikasi (`/login`): 5 request/menit per IP untuk menangkal *brute force*.
-4. **Row Level Security (RLS)**: Setiap tabel database dilindungi dengan kebijakan akses berbasis peran (Admin, Kru, Publik).
-5. **Storage Bucket Constraints**: Bucket `bukti-pengangkutan` hanya mengizinkan MIME type `image/jpeg`, `image/png`, dan `image/webp` dengan batasan 5.242.880 bytes (5 MB).
+### 2. Sopir Armada
+1. Buka `/login`, masukkan username (misal: `sopir1`) dan password.
+2. Di halaman **Dashboard**, pilih unit armada yang berstatus *Di Garasi*, lalu klik **Mulai Perjalanan**.
+3. Pastikan izin lokasi GPS diaktifkan dan biarkan browser tetap terbuka selama bertugas.
+4. Saat sampah diangkut, ambil foto pembersihan sampah melalui tombol **Unggah Foto Bukti**.
+5. Setelah rute pengangkutan selesai, klik **Akhiri Perjalanan** (wajib minimal ada 1 foto bukti). Unit armada akan otomatis kembali berstatus *Di Garasi*.
 
----
+### 3. Kepala Bidang (Kabid)
+1. Buka `/login`, masukkan akun Kabid (`kabid`).
+2. Di menu **Pemantauan**, pantau posisi armada yang sedang bergerak di peta realtime dan cek ritasi perjalanan harian.
+3. Di menu **Galeri Bukti**, periksa foto-foto hasil kerja lapangan yang dikirim sopir.
+4. Di menu **Daftar Aduan**, pilih aduan warga yang masuk untuk melihat titik lokasi dan memberikan **Respon Petugas** (ubah status menjadi *Diproses*, *Selesai*, atau *Ditolak*).
+5. Di menu **Laporan Excel**, unduh rekapitulasi data periodik untuk evaluasi dinas.
 
-## Lisensi
-
-Proyek ini dikembangkan untuk keperluan akademik Laporan Kerja Praktek Program Studi Teknik Informatika, Fakultas Ilmu Komputer, Universitas Kuningan bekerja sama dengan **Dinas Lingkungan Hidup Kabupaten Kuningan**.
-
-
----
-
-## Keamanan & Proteksi Abuse
-
-Aplikasi ini mengimplementasikan prinsip *defense-in-depth* untuk menjaga integritas data dan ketersediaan layanan publik:
-
-1. **Security Headers**:
-   - `X-Frame-Options: DENY` (mencegah *clickjacking*).
-   - `X-Content-Type-Options: nosniff` (mencegah *MIME sniffing*).
-   - `Referrer-Policy: strict-origin-when-cross-origin`.
-   - `Strict-Transport-Security` (HSTS).
-2. **Server Actions Size Limit**: Dibatasi maksimal 5 MB selaras dengan batasan berkas foto bukti.
-3. **Application Rate Limiting**:
-   - Pembatasan umum: 60 request/menit per IP.
-   - Pembatasan rute autentikasi (`/login`): 5 request/menit per IP untuk menangkal *brute force*.
-4. **Row Level Security (RLS)**: Setiap tabel database dilindungi dengan kebijakan akses berbasis peran (Admin, Kru, Publik).
-5. **Storage Bucket Constraints**: Bucket `bukti-pengangkutan` hanya mengizinkan MIME type `image/jpeg`, `image/png`, dan `image/webp` dengan batasan 5.242.880 bytes (5 MB).
+### 4. Administrator
+1. Buka `/login`, masuk dengan akun `admin`.
+2. Di menu **Kelola Armada**, daftarkan unit truk baru, ubah status perawatan bengkel, atau arsipkan armada lama.
+3. Di menu **Kelola Pengguna**, buatkan akun untuk pengemudi baru atau kepala bidang baru.
+4. Semua aktivitas pembuatan dan modifikasi data terekam pada audit log sistem.
 
 ---
 
-## Lisensi
+## 🛡 Checklist Keamanan
 
-Proyek ini dikembangkan untuk keperluan akademik Laporan Kerja Praktek Program Studi Teknik Informatika, Fakultas Ilmu Komputer, Universitas Kuningan bekerja sama dengan **Dinas Lingkungan Hidup Kabupaten Kuningan**.
+Aplikasi memenuhi seluruh poin standar keamanan **BUILD_GUIDE §8**:
+
+- [x] **Sign-up publik dimatikan**: Pengguna internal hanya dapat didaftarkan oleh Administrator.
+- [x] **Row Level Security (RLS)**: Aktif di 100% tabel database. Pengguna anonim ditolak dari query langsung ke REST API.
+- [x] **Zero Service Role Leak**: Secret key `SUPABASE_SERVICE_ROLE_KEY` hanya dieksekusi di server; bundle klien bersih (`grep -rn` terverifikasi 0 bocoran).
+- [x] **Keamanan HTTP Headers**:
+  - `Content-Security-Policy`: Terkonfigurasi untuk Supabase, Cloudflare Turnstile, dan tile OpenStreetMap.
+  - `X-Frame-Options: DENY` & `X-Content-Type-Options: nosniff`.
+  - `Strict-Transport-Security` (HSTS preload aktif).
+- [x] **Validasi File Unggahan**: Pengecekan MIME type dan *magic bytes* biner (`JPEG: FF D8 FF`, `PNG: 89 50 4E 47`, `WebP: RIFF...WEBP`) untuk menangkal file berbahaya yang disamarkan.
+- [x] **Signed URL Storage**: Bucket privat; foto hanya dapat diakses dengan token kedaluwarsa singkat (≤ 5 menit).
+- [x] **Privasi Data Warga**: Nama dan nomor telepon pelapor dilindungi RLS dan tidak pernah dikirim ke endpoint publik.
+- [x] **Audit Responsif Penuh**: Lulus verifikasi Playwright 10 resolusi layar (320–1920 px) tanpa scroll horizontal.
+
+---
+
+## ☁️ Panduan Deployment ke Vercel
+
+1. **Hubungkan Repositori ke Vercel**:
+   - Masuk ke dashboard [Vercel](https://vercel.com) dan impor repositori GitHub ini.
+   - Atur **Root Directory** ke folder `frontend`.
+   - Pilih Framework Preset **Next.js**.
+2. **Konfigurasi Environment Variables di Vercel**:
+   Tambahkan variabel berikut pada menu *Settings -> Environment Variables*:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY` (Tandai sebagai *Secret / Sensitive*)
+   - `TURNSTILE_SECRET_KEY` (Tandai sebagai *Secret / Sensitive*)
+   - `NEXT_PUBLIC_TURNSTILE_SITE_KEY`
+   - `IP_HASH_SALT`
+3. **Konfigurasi Supabase Project**:
+   - Di dashboard Supabase: buka *Authentication -> URL Configuration*.
+   - Atur **Site URL** ke domain Vercel Anda (misal: `https://silapor-sampah.kuningankab.go.id`).
+   - Tambahkan domain redirect di *Redirect URLs*.
+4. **Deploy**: Klik tombol **Deploy**. Aplikasi akan otomatis dikompilasi dan siap digunakan.
+
+---
+
+## ❓ Pertanyaan Terbuka untuk DLH Kabupaten Kuningan
+
+Berikut adalah beberapa poin pertimbangan operasional lanjutan yang diserahkan kepada pihak manajemen DLH Kuningan:
+1. **Kebijakan Retensi Data Privasi (UU PDP)**: Apakah data identitas warga (nama & nomor HP) pada aduan yang sudah berstatus `selesai` lebih dari 2 tahun perlu dilakukan pembersihan otomatis (*anonymization / purging*)?
+2. **Koneksi GPS Lapangan**: Sebagian wilayah pedesaan di Kabupaten Kuningan memiliki kendala sinyal seluler (*blank spot*). Aplikasi telah mendukung toleransi offline di mana sopir tetap dapat mengambil foto dan menyelesaikan tugas dengan peringatan GPS. Apakah diperlukan sinkronisasi antrean offline lokal (*background sync*) jika sopir berada di area tanpa sinyal lebih dari 30 menit?
+3. **Struktur Pengelola Akun**: Apakah akun admin master dipegang oleh Tim IT Dinas Kominfo Kuningan atau langsung oleh staf bagian kepegawaian DLH?
+
+---
+
+*Dikembangkan dengan standar kualitas, efisiensi minimalis, dan kepatuhan penuh terhadap spesifikasi teknis Pemerintah Kabupaten Kuningan.*

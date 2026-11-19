@@ -422,6 +422,7 @@ export function KelolaPenggunaClient({
                 onChange={(e) => setAddPassword(e.target.value)}
                 disabled={addLoading}
                 className="text-sm"
+                autoComplete="new-password"
                 required
               />
             </div>
@@ -525,6 +526,7 @@ export function KelolaPenggunaClient({
                 onChange={(e) => setEditPassword(e.target.value)}
                 disabled={editLoading}
                 className="text-sm"
+                autoComplete="new-password"
               />
               <span className="text-[11px] text-gray-400 block mt-1">
                 Isi minimal 8 karakter untuk mengganti password.

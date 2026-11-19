@@ -41,10 +41,10 @@ export function AdminNav({ className = '' }: AdminNavProps) {
   ];
 
   return (
-    <div className={`w-full bg-surface border-b border-gray-200 ${className}`}>
+    <div className={`w-full overflow-hidden bg-surface border-b border-gray-200 ${className}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav
-          className="flex space-x-2 sm:space-x-4 overflow-x-auto py-2 -mb-px"
+          className="flex space-x-2 sm:space-x-4 overflow-x-auto max-w-full py-2 -mb-px"
           aria-label="Navigasi Administrasi Sistem"
         >
           {navItems.map((item) => {
