@@ -97,17 +97,6 @@ export default function Home() {
             </div>
           </Card>
         </div>
-
-        {/* Banner Katalog UI untuk Verifikasi */}
-        <div className="mt-12 text-center">
-          <Link
-            href="/_ui"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-primary hover:text-primary-dark bg-white border border-primary/20 px-4 py-2 rounded-full shadow-xs hover:bg-emerald-50 transition-colors"
-          >
-            <span>🎨 Lihat Katalog Komponen UI (_ui)</span>
-            <span>&rarr;</span>
-          </Link>
-        </div>
       </main>
     </div>
   );
