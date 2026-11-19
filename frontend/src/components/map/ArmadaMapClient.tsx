@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useSyncExternalStore } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Badge } from '@/components/ui/Badge';
@@ -21,6 +21,32 @@ interface ArmadaData {
 const KUNINGAN_CENTER: [number, number] = [-6.9765, 108.4831];
 
 const emptySubscribe = () => () => {};
+
+// Handler untuk merespons perubahan ukuran layar (RESPONSIVE_SPEC §4.6)
+function MapResizeHandler() {
+  const map = useMap();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 250);
+
+    const handleResize = () => {
+      map.invalidateSize();
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
+  }, [map]);
+
+  return null;
+}
 
 export default function ArmadaMapClient() {
   const isMounted = useSyncExternalStore(
@@ -52,6 +78,7 @@ export default function ArmadaMapClient() {
     }
 
     loadArmada();
+    // Polling tiap 15 detik sesuai spesifikasi Fase 5
     const interval = setInterval(loadArmada, 15000);
 
     return () => {
@@ -86,7 +113,7 @@ export default function ArmadaMapClient() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 w-full">
-      {/* Peta Interaktif */}
+      {/* Peta Interaktif Leaflet */}
       <div className="flex-1 rounded-2xl overflow-hidden border border-gray-200 shadow-sm relative h-[60dvh] lg:h-[65vh] min-h-[320px]">
         {isLoading && (
           <div className="absolute inset-0 bg-white/70 z-[1000] flex items-center justify-center text-sm font-semibold text-gray-700">
@@ -97,10 +124,12 @@ export default function ArmadaMapClient() {
           center={KUNINGAN_CENTER}
           zoom={12}
           scrollWheelZoom={false}
+          touchZoom={true}
           className="w-full h-full"
         >
+          <MapResizeHandler />
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           {armadaList.map((a) => (
@@ -126,13 +155,13 @@ export default function ArmadaMapClient() {
             Armada Beroperasi ({armadaList.length})
           </h2>
           <p className="text-xs text-gray-500">
-            Pembaruan lokasi otomatis tiap 15 detik
+            Pembaruan lokasi otomatis tiap 15 detik (Posisi &le; 10 menit)
           </p>
         </div>
 
         {armadaList.length === 0 ? (
           <div className="text-xs text-gray-500 italic text-center py-6">
-            Saat ini belum ada armada yang sedang melakukan perjalanan pengangkutan aktif.
+            Saat ini belum ada armada aktif dengan pembaruan sinyal dalam 10 menit terakhir.
           </div>
         ) : (
           <ul className="space-y-2.5">
