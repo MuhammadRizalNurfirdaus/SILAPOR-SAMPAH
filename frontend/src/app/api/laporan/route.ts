@@ -141,7 +141,7 @@ export async function GET(request: NextRequest) {
 
       const wsAduan = wb.addWorksheet('Aduan');
       wsAduan.columns = [
-        { header: 'Kode Tiket', key: 'kode_tiket', width: 22 },
+        { header: 'Nomor Laporan Aduan', key: 'kode_tiket', width: 22 },
         { header: 'Tanggal (WIB)', key: 'created_at', width: 26 },
         { header: 'Pelapor', key: 'nama_pelapor', width: 24 },
         { header: 'Telepon', key: 'no_telepon', width: 18 },

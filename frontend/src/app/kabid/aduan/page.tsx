@@ -100,7 +100,7 @@ export default async function KabidDaftarAduanPage({ searchParams }: PageProps) 
   const columns: Column<AduanListItem>[] = [
     {
       key: 'kode_tiket',
-      header: 'Kode Tiket',
+      header: 'Nomor Laporan',
       render: (item) => (
         <span className="font-mono font-bold text-gray-900 tracking-wide">
           {item.kode_tiket}

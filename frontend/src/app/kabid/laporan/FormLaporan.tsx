@@ -229,7 +229,7 @@ export function FormLaporan() {
             Memuat data seluruh aduan masyarakat dalam rentang tanggal terpilih:
           </p>
           <ul className="list-disc list-inside space-y-0.5 text-gray-700 font-mono text-[11px]">
-            <li>Kode Tiket</li>
+            <li>Nomor Laporan Aduan</li>
             <li>Tanggal &amp; Waktu (WIB)</li>
             <li>Nama Pelapor &amp; Telepon</li>
             <li>Deskripsi Lokasi Sampah</li>

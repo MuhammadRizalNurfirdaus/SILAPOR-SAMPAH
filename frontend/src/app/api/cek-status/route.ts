@@ -32,10 +32,10 @@ export async function GET(req: NextRequest) {
 
   const kode = (req.nextUrl.searchParams.get('kode') ?? '').trim().toUpperCase();
 
-  // Validasi format kode tiket: SLP-YYMM-XXXXXXXX (Layar 06b jika tidak valid)
+  // Validasi format nomor laporan: SLP-YYMM-XXXXXXXX (Layar 06b jika tidak valid)
   if (!/^SLP-\d{4}-[A-F0-9]{8}$/i.test(kode)) {
     return NextResponse.json(
-      { found: false, message: 'Format kode tiket tidak sesuai' },
+      { found: false, message: 'Format nomor laporan aduan tidak sesuai' },
       { status: 404 }
     );
   }

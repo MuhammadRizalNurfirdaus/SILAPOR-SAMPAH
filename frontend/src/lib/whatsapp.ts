@@ -78,7 +78,7 @@ export function generateWhatsAppAduanUrl({
   pesan += `*Dinas Lingkungan Hidup Kabupaten Kuningan*\n\n`;
   pesan += `Halo Bpk/Ibu *${namaPelapor || 'Masyarakat'}*,\n\n`;
   pesan += `Terima kasih atas laporan aduan tumpukan sampah yang Anda sampaikan. Berikut adalah pembaruan status terbaru dari Kepala Bidang Pengelolaan Sampah:\n\n`;
-  pesan += `🎫 *Kode Tiket:* \`${kodeTiket}\`\n`;
+  pesan += `🎫 *Nomor Laporan Aduan:* \`${kodeTiket}\`\n`;
   pesan += `📊 *Status Laporan:* *${statusLabel}*\n`;
 
   if (catatan && catatan.trim().length > 0) {

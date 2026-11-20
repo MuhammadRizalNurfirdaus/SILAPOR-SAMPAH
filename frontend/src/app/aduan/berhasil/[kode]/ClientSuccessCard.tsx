@@ -40,10 +40,10 @@ export function ClientSuccessCard({ kode }: ClientSuccessCardProps) {
         </p>
       </div>
 
-      {/* Box Kode Tiket */}
+      {/* Box Nomor Laporan Aduan */}
       <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-4 sm:p-5 space-y-3">
         <span className="text-xs font-semibold uppercase tracking-wider text-primary-dark">
-          Kode Tiket Pelacakan
+          Nomor Laporan Aduan
         </span>
         <div className="text-2xl sm:text-3xl font-extrabold font-mono text-primary tracking-wider break-all select-all">
           {kode}
@@ -66,7 +66,7 @@ export function ClientSuccessCard({ kode }: ClientSuccessCardProps) {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
-                <span>Salin Kode Tiket</span>
+                <span>Salin Nomor Laporan</span>
               </>
             )}
           </button>
@@ -76,7 +76,7 @@ export function ClientSuccessCard({ kode }: ClientSuccessCardProps) {
       <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg border border-gray-100 text-left space-y-1">
         <p className="font-semibold text-gray-700">Catatan untuk Pelapor:</p>
         <p>
-          Simpan kode tiket di atas untuk mengecek perkembangan penanganan dan respon resmi petugas pengangkut sampah.
+          Simpan nomor laporan aduan di atas untuk mengecek perkembangan penanganan dan respon resmi petugas pengangkut sampah.
         </p>
       </div>
 

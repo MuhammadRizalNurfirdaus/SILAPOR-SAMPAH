@@ -165,7 +165,7 @@ export function FormResponAduan({
             Tampilkan ke Publik (Portal Cek Status)
           </strong>
           <span className="text-gray-500 text-[11px]">
-            Jika dicentang, warga dapat membaca catatan ini saat mengecek kode tiket mereka.
+            Jika dicentang, warga dapat membaca catatan ini saat mengecek nomor laporan aduan mereka.
           </span>
         </label>
       </div>

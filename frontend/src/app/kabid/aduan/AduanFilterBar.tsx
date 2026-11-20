@@ -50,14 +50,14 @@ export function AduanFilterBar({
       className="bg-surface p-4 rounded-xl border border-gray-200 shadow-2xs space-y-3"
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-        {/* Cari Kode Tiket */}
+        {/* Cari Nomor Laporan */}
         <div>
           <label className="block text-xs font-semibold text-gray-700 mb-1">
-            Cari Kode Tiket
+            Cari Nomor Laporan
           </label>
           <Input
             type="text"
-            placeholder="Mis: KNG-2026-..."
+            placeholder="Mis: SLP-2611-..."
             value={q}
             onChange={(e) => setQ(e.target.value.toUpperCase())}
             className="text-xs uppercase"

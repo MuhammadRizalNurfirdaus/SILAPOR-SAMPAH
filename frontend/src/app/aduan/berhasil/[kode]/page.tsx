@@ -30,7 +30,7 @@ export default function AduanBerhasilPage({ params }: Props) {
         <Suspense
           fallback={
             <div className="text-center text-sm text-gray-500">
-              Memuat kode tiket...
+              Memuat nomor laporan aduan...
             </div>
           }
         >

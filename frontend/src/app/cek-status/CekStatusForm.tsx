@@ -129,7 +129,7 @@ export function CekStatusForm() {
           <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
             <div className="flex-1 w-full">
               <Input
-                label="Kode Tiket Aduan"
+                label="Nomor Laporan Aduan"
                 id="kode_tiket"
                 name="kode_tiket"
                 type="text"
@@ -171,8 +171,8 @@ export function CekStatusForm() {
             Aduan Tidak Ditemukan
           </h2>
           <p className="text-sm text-gray-600 max-w-md mx-auto">
-            Kode tiket <span className="font-mono font-bold text-gray-800">{kode}</span> tidak terdaftar dalam sistem.
-            Pastikan tidak ada kesalahan ketik huruf/angka pada kode tiket Anda.
+            Nomor laporan aduan <span className="font-mono font-bold text-gray-800">{kode}</span> tidak terdaftar dalam sistem.
+            Pastikan tidak ada kesalahan ketik huruf/angka pada nomor laporan aduan Anda.
           </p>
         </Card>
       )}
@@ -184,7 +184,7 @@ export function CekStatusForm() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-5">
             <div>
               <span className="text-xs uppercase font-semibold text-gray-500">
-                Kode Tiket Aduan
+                Nomor Laporan Aduan
               </span>
               <h2 className="text-2xl font-mono font-bold text-gray-900">
                 {result.kode_tiket}

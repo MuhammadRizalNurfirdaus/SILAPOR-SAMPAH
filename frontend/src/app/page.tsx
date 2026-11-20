@@ -111,7 +111,7 @@ export default function Home() {
                 <div>
                   <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">Cek Status Aduan</h2>
                   <p className="mt-1.5 text-sm text-gray-600 leading-relaxed">
-                    Pantau perkembangan tindak lanjut aduan yang telah dikirimkan menggunakan kode tiket laporan Anda.
+                    Pantau perkembangan tindak lanjut aduan yang telah dikirimkan menggunakan nomor laporan aduan Anda.
                   </p>
                 </div>
               </div>
@@ -160,7 +160,7 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-gray-200/60 text-[11px] text-gray-500 font-medium">
-                  Tiket kode langsung diterbitkan otomatis.
+                  Nomor laporan aduan langsung diterbitkan otomatis.
                 </div>
               </div>
 
@@ -305,7 +305,7 @@ export default function Home() {
                 </summary>
                 <p className="mt-3 text-xs sm:text-sm text-gray-600 leading-relaxed pt-2 border-t border-gray-200/60">
                   Tidak perlu. Pelaporan sampah di SILAPOR SAMPAH terbuka untuk umum tanpa harus mendaftar atau login.
-                  Setelah mengirim laporan, Anda akan langsung menerima <strong>Kode Tiket Aduan</strong> resmi.
+                  Setelah mengirim laporan, Anda akan langsung menerima <strong>Nomor Laporan Aduan</strong> resmi.
                 </p>
               </details>
 
@@ -350,7 +350,7 @@ export default function Home() {
                 </summary>
                 <p className="mt-3 text-xs sm:text-sm text-gray-600 leading-relaxed pt-2 border-t border-gray-200/60">
                   Setiap kali sopir armada menyelesaikan pengangkutan, mereka wajib mengunggah <strong>foto bukti penanganan</strong>.
-                  Foto bukti ini dapat Anda lihat secara transparan pada menu <strong>Cek Status Aduan</strong> dengan memasukkan kode tiket Anda.
+                  Foto bukti ini dapat Anda lihat secara transparan pada menu <strong>Cek Status Aduan</strong> dengan memasukkan nomor laporan aduan Anda.
                 </p>
               </details>
             </div>
@@ -462,7 +462,7 @@ export default function Home() {
                 Buat Laporan Baru
               </Link>
               <Link href="/cek-status" className="text-gray-400 hover:text-white transition-colors">
-                Lacak Tiket Aduan
+                Lacak Nomor Laporan
               </Link>
               <a href="#alur-layanan" className="text-gray-400 hover:text-white transition-colors">
                 Alur Penanganan
