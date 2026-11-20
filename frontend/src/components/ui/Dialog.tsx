@@ -22,21 +22,35 @@ export function Dialog({
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
+    if (!isOpen) return;
 
-    if (isOpen) {
-      if (!dialog.open) {
-        dialog.showModal();
-        document.body.style.overflow = "hidden";
-      }
-    } else {
-      if (dialog.open) {
-        dialog.close();
-        document.body.style.overflow = "";
-      }
+    const dialog = dialogRef.current;
+    if (dialog && !dialog.open) {
+      dialog.showModal();
     }
-  }, [isOpen]);
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = prevOverflow;
+      if (dialog && dialog.open) {
+        dialog.close();
+      }
+    };
+  }, [isOpen, onClose]);
+
+  // Jika tidak terbuka, jangan render apapun di DOM (cegah intercept click & tumpukan modal)
+  if (!isOpen) return null;
 
   // Handle backdrop click
   const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
@@ -48,7 +62,10 @@ export function Dialog({
   return (
     <dialog
       ref={dialogRef}
-      onClose={onClose}
+      onCancel={(e) => {
+        e.preventDefault();
+        onClose();
+      }}
       onClick={handleBackdropClick}
       className={`
         fixed inset-0 m-0 w-full h-full max-w-full max-h-full
@@ -61,6 +78,7 @@ export function Dialog({
     >
       {/* Modal / Bottom Sheet Body */}
       <div
+        onClick={(e) => e.stopPropagation()}
         className="w-full sm:max-w-lg bg-surface shadow-2xl overflow-hidden flex flex-col
           rounded-t-2xl sm:rounded-2xl max-h-[90dvh] sm:max-h-[85vh]
           animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200"
@@ -82,7 +100,7 @@ export function Dialog({
             type="button"
             onClick={onClose}
             aria-label="Tutup dialog"
-            className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg min-w-[36px] min-h-[36px] flex items-center justify-center"
+            className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg min-w-[36px] min-h-[36px] flex items-center justify-center cursor-pointer transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
