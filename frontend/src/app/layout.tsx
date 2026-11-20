@@ -19,7 +19,13 @@ export const metadata: Metadata = {
   description:
     "Sistem Lapor dan Pemantauan Pengangkutan Sampah Dinas Lingkungan Hidup Kabupaten Kuningan",
   icons: {
-    icon: "/logo-dlh-kuningan.png",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/logodlh.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 };
 

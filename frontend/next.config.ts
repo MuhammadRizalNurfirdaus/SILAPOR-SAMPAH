@@ -16,6 +16,7 @@ const cspHeader = `
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  devIndicators: false,
   experimental: {
     serverActions: { bodySizeLimit: "5mb" }, // selaras batas unggah foto 5 MB (Bab 4.3.2a)
   },
