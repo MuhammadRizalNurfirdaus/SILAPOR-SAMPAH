@@ -62,24 +62,7 @@ export function AdminUserMenu({ name, username }: AdminUserMenuProps) {
             <p className="text-[11px] text-gray-500 font-mono truncate">@{username} &bull; Admin DLH</p>
           </div>
 
-          <div className="py-1">
-            <Link
-              href="/kabid"
-              onClick={() => setIsOpen(false)}
-              className="block px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
-            >
-              Mode Kepala Bidang
-            </Link>
-            <Link
-              href="/admin/retensi"
-              onClick={() => setIsOpen(false)}
-              className="block px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
-            >
-              Retensi Data (UU PDP)
-            </Link>
-          </div>
-
-          <div className="pt-1 border-t border-gray-100">
+          <div className="pt-1">
             <Link
               href="/api/auth/logout"
               onClick={() => setIsOpen(false)}
