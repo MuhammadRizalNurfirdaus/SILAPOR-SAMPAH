@@ -103,10 +103,12 @@ Catatan: layar yang bernomor "b" adalah **state error** dan wajib diimplementasi
 - Data pribadi sopir **tidak** ditampilkan; plat nomor disamarkan sebagian (mis. `E 12•• AB`).
 - Posisi yang lebih tua dari 10 menit ditandai "tidak aktif".
 
-**FR-P3 Buat Aduan.** Field: Nama Pelapor, No. Telepon, Deskripsi Lokasi, Foto Lokasi.
-- Validasi: nama 2–100 karakter; telepon format Indonesia (`08…`, `62…`, `+62…`); deskripsi 10–500 karakter; foto JPG/PNG/WebP maksimal **5 MB** (dicek ukuran, MIME, dan magic bytes di server).
+**FR-P3 Buat Aduan.** Field: Nama Pelapor, No. Telepon, Deskripsi Lokasi, Foto Lokasi, Pernyataan Keabsahan Laporan.
+- Validasi: nama 2–100 karakter; telepon format Indonesia (`08…`, `62…`, `+62…`); deskripsi 10–500 karakter; foto JPG/PNG/WebP maksimal **5 MB** (dicek ukuran, MIME, dan magic bytes di server); pernyataan keabsahan wajib dicentang.
+- Pernyataan Keabsahan Laporan: Edukasi etika pelaporan publik dan tanggung jawab hukum (keterangan palsu dapat dikenai sanksi perundang-undangan). Pelapor wajib mencentang persetujuan: *"Saya menyatakan data dan foto yang saya kirim benar."* sebelum pengiriman aduan.
+- Privasi: Nama dan nomor telepon pelapor hanya digunakan untuk verifikasi dan tindak lanjut petugas.
 - Gagal validasi → tampilkan pesan error "Data atau ukuran foto tidak valid" (layar 04b) dengan detail per field; isian tidak hilang.
-- Berhasil → tampil **kode tiket** (format `SLP-YYMM-XXXXXXXX`) dan tombol salin (layar 05).
+- Berhasil → tampil **nomor laporan aduan** (format `SLP-YYMM-XXXXXXXX`) dan tombol salin (layar 05).
 - Anti-penyalahgunaan: Cloudflare Turnstile, honeypot field, batas 5 aduan/jam per IP (disimpan sebagai hash).
 
 **FR-P4 Cek Status Aduan.** Input kode tiket → tampil status (`baru`, `diproses`, `selesai`, `ditolak`), tanggal, dan riwayat respon yang ditandai publik. Tidak menampilkan nama/telepon pelapor. Tidak ditemukan → layar 06b. Dibatasi laju untuk mencegah tebak-tebakan kode.

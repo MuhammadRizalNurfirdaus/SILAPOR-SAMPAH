@@ -16,6 +16,7 @@ interface FormErrors {
   no_telepon?: string[];
   deskripsi_lokasi?: string[];
   foto?: string;
+  pernyataan?: string;
 }
 
 export function FormAduan() {
@@ -29,6 +30,7 @@ export function FormAduan() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [honeypot, setHoneypot] = useState('');
+  const [pernyataanBenar, setPernyataanBenar] = useState(false);
 
   // UI status states
   const [isLoading, setIsLoading] = useState(false);
@@ -89,6 +91,16 @@ export function FormAduan() {
       setErrors({
         global: 'Data atau ukuran foto tidak valid',
         foto: 'Foto lokasi sampah wajib dilampirkan',
+      });
+      setIsLoading(false);
+      errorSummaryRef.current?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    if (!pernyataanBenar) {
+      setErrors({
+        global: 'Pernyataan keabsahan wajib disetujui',
+        pernyataan: 'Centang kotak pernyataan bahwa data dan foto yang Anda kirimkan adalah benar.',
       });
       setIsLoading(false);
       errorSummaryRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -316,19 +328,46 @@ export function FormAduan() {
         />
       </div>
 
-      {/* Peringatan Kepatuhan Hukum & Larangan Laporan Palsu */}
-      <div className="rounded-xl border border-amber-200 bg-amber-50/90 p-3.5 sm:p-4 text-amber-950 space-y-1.5 text-xs sm:text-[13px]">
-        <div className="flex items-center gap-2 font-bold text-amber-900">
-          <svg className="w-4 h-4 shrink-0 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      {/* Pernyataan Keabsahan Laporan */}
+      <div className="rounded-xl border border-gray-200 bg-gray-50/80 p-4 sm:p-5 text-gray-800 space-y-3 text-xs sm:text-[13px]">
+        <div className="flex items-center gap-2 font-bold text-gray-900">
+          <svg className="w-4 h-4 shrink-0 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
           </svg>
-          <span>Peringatan Hukum & Keabsahan Laporan</span>
+          <span className="text-sm font-semibold">Pernyataan Keabsahan Laporan</span>
         </div>
-        <p className="leading-relaxed text-amber-900">
-          Data dan foto yang Anda kirimkan <strong>wajib sesuai fakta di lapangan</strong>. Dilarang keras mengirimkan laporan palsu, foto rekayasa, atau aduan fiktif untuk memperdaya petugas.
+
+        <p className="leading-relaxed text-gray-700">
+          Pastikan data dan foto yang Anda kirim sesuai dengan kondisi sebenarnya di lapangan. Laporan palsu, foto rekayasa, atau aduan fiktif menghambat petugas menangani laporan warga lain, dan dapat ditolak atau diabaikan. Pemberian keterangan palsu kepada instansi pemerintah dapat dikenai sanksi sesuai peraturan perundang-undangan yang berlaku.
         </p>
-        <p className="leading-relaxed text-amber-800 text-[11px] sm:text-xs">
-          <strong>Sanksi Pidana:</strong> Memberikan laporan atau keterangan palsu kepada instansi pemerintah dapat dituntut pidana berdasarkan <strong>Pasal 220 KUHP</strong> (ancaman penjara hingga 1 tahun 4 bulan), <strong>Pasal 378 KUHP</strong> tentang penipuan, serta <strong>Pasal 28 ayat (1) jo Pasal 45A UU ITE</strong> terkait penyebaran informasi bohong dan manipulatif.
+
+        <label className="flex items-start gap-2.5 pt-1 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            name="pernyataan_keabsahan"
+            id="pernyataan_keabsahan"
+            checked={pernyataanBenar}
+            onChange={(e) => {
+              setPernyataanBenar(e.target.checked);
+              if (errors.pernyataan) {
+                setErrors((prev) => ({ ...prev, pernyataan: undefined }));
+              }
+            }}
+            disabled={isLoading || isCompressing}
+            className="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer shrink-0"
+            required
+          />
+          <span className="font-semibold text-gray-900 text-xs sm:text-sm">
+            Saya menyatakan data dan foto yang saya kirim benar.
+          </span>
+        </label>
+
+        {errors.pernyataan && (
+          <p className="text-xs text-danger font-medium">{errors.pernyataan}</p>
+        )}
+
+        <p className="text-[11px] sm:text-xs text-gray-500 italic pt-0.5">
+          * Nama dan nomor telepon Anda hanya digunakan untuk menindaklanjuti aduan ini.
         </p>
       </div>
 
