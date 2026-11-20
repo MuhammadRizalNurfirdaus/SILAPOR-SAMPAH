@@ -3,7 +3,7 @@ import React from "react";
 export interface Column<T> {
   key: string;
   header: string;
-  render?: (item: T) => React.ReactNode;
+  render?: (item: T, index?: number) => React.ReactNode;
   isSecondary?: boolean; // Disembunyikan pada tablet 768-1023px
   className?: string;
 }
@@ -62,7 +62,7 @@ export function TableCard<T>({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {data.map((item) => (
+              {data.map((item, index) => (
                 <tr
                   key={keyExtractor(item)}
                   className="hover:bg-gray-50/80 transition-colors"
@@ -76,7 +76,7 @@ export function TableCard<T>({
                           col.isSecondary ? "hidden lg:table-cell" : ""
                         } ${col.className || ""}`}
                       >
-                        {col.render ? col.render(item) : String(value ?? "-")}
+                        {col.render ? col.render(item, index) : String(value ?? "-")}
                       </td>
                     );
                   })}
