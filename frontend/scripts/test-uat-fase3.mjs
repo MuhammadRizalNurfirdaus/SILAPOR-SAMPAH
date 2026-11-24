@@ -28,6 +28,26 @@ const anonClient = createClient(supabaseUrl, anonKey);
 
 const BASE_URL = 'http://localhost:3002';
 
+// Pastikan ada TPS uji (6 buah, agar uji rate limit tidak kena batas 1 aduan/TPS)
+const runId = Date.now();
+const tpsPrefix = `TPS UAT ${runId}`;
+for (let i = 1; i <= 6; i++) {
+  await adminClient
+    .from('tps')
+    .insert({ nama: `${tpsPrefix} ${i}`, kecamatan: 'Kuningan', alamat: 'UAT', is_active: true })
+    .then(() => {})
+    .catch(() => {});
+}
+const { data: tpsRows } = await adminClient
+  .from('tps')
+  .select('id')
+  .eq('kecamatan', 'Kuningan')
+  .ilike('nama', `${tpsPrefix}%`)
+  .order('nama');
+const tpsIds = (tpsRows || []).map((r) => r.id);
+const defaultTpsId = tpsIds[0];
+const dupTpsId = tpsIds[tpsIds.length - 1] || defaultTpsId;
+
 // 1x1 transparent PNG magic bytes
 const VALID_PNG_BYTES = Buffer.from([
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
@@ -62,6 +82,7 @@ async function runUAT() {
   form1.append('nama_pelapor', 'UAT Pelapor');
   form1.append('no_telepon', '081234567890');
   form1.append('deskripsi_lokasi', 'Jalan Veteran No. 10 Kuningan, depan pertigaan');
+  form1.append('tps_id', defaultTpsId);
   form1.append('foto', new Blob([VALID_PNG_BYTES], { type: 'image/png' }), 'bukti.png');
   form1.append('cf-turnstile-response', 'XXXX.DUMMY.TOKEN.XXXX');
 
@@ -100,6 +121,82 @@ async function runUAT() {
       process.exit(1);
     }
     console.log(`[PASS] Terverifikasi file foto tersimpan di bucket 'aduan-foto'.`);
+
+  // ----------------------------------------------------
+  // UAT TPS: Aduan kedua di TPS sama ditolak (409)
+  // ----------------------------------------------------
+  console.log('\\n--- UAT TPS: Duplikat aduan aktif per TPS ---');
+
+  // Buat aduan pertama di TPS khusus duplikat
+  const dupFirstForm = new FormData();
+  dupFirstForm.append('nama_pelapor', 'UAT Duplikat Pertama');
+  dupFirstForm.append('no_telepon', '081234567890');
+  dupFirstForm.append('deskripsi_lokasi', 'Lokasi TPS duplikat pertama');
+  dupFirstForm.append('tps_id', dupTpsId);
+  dupFirstForm.append('foto', new Blob([VALID_PNG_BYTES], { type: 'image/png' }), 'bukti.png');
+  dupFirstForm.append('cf-turnstile-response', 'XXXX.DUMMY.TOKEN.XXXX');
+
+  const dupFirstRes = await fetch(`${BASE_URL}/api/aduan`, {
+    method: 'POST',
+    body: dupFirstForm,
+    headers: { 'x-forwarded-for': '192.168.1.199' },
+  });
+  const dupFirstData = await dupFirstRes.json();
+  if (!(dupFirstRes.status === 200 && dupFirstData.ok && dupFirstData.kode)) {
+    console.error('[FAIL] Aduan pertama TPS duplikat gagal:', dupFirstRes.status, dupFirstData);
+    process.exit(1);
+  }
+  const dupFirstTicket = dupFirstData.kode;
+
+  // Kirim kedua ke TPS yang sama -> harus 409
+  const dupForm = new FormData();
+  dupForm.append('nama_pelapor', 'UAT Duplikat');
+  dupForm.append('no_telepon', '081234567890');
+  dupForm.append('deskripsi_lokasi', 'Lokasi duplikat TPS yang sama');
+  dupForm.append('tps_id', dupTpsId);
+  dupForm.append('foto', new Blob([VALID_PNG_BYTES], { type: 'image/png' }), 'bukti.png');
+  dupForm.append('cf-turnstile-response', 'XXXX.DUMMY.TOKEN.XXXX');
+
+  const dupRes = await fetch(`${BASE_URL}/api/aduan`, {
+    method: 'POST',
+    body: dupForm,
+    headers: { 'x-forwarded-for': '192.168.1.200' },
+  });
+  const dupData = await dupRes.json();
+
+  if (dupRes.status === 409 && dupData.code === 'TPS_AKTIF') {
+    console.log(`[PASS] Aduan kedua di TPS sama ditolak dengan HTTP 409: "${dupData.message}"`);
+  } else {
+    console.error('[FAIL] Duplikat TPS tidak ditolak sesuai:', dupRes.status, dupData);
+    process.exit(1);
+  }
+
+  // Set aduan pertama menjadi selesai, lalu kirim lagi harus sukses
+  await adminClient.from('aduan').update({ status: 'selesai' }).eq('kode_tiket', dupFirstTicket);
+
+  const dupForm2 = new FormData();
+  dupForm2.append('nama_pelapor', 'UAT Setelah Selesai');
+  dupForm2.append('no_telepon', '081234567890');
+  dupForm2.append('deskripsi_lokasi', 'Lokasi setelah aduan selesai');
+  dupForm2.append('tps_id', dupTpsId);
+  dupForm2.append('foto', new Blob([VALID_PNG_BYTES], { type: 'image/png' }), 'bukti.png');
+  dupForm2.append('cf-turnstile-response', 'XXXX.DUMMY.TOKEN.XXXX');
+
+  const dupRes2 = await fetch(`${BASE_URL}/api/aduan`, {
+    method: 'POST',
+    body: dupForm2,
+    headers: { 'x-forwarded-for': '192.168.1.201' },
+  });
+  const dupData2 = await dupRes2.json();
+
+  if (dupRes2.status === 200 && dupData2.ok && dupData2.kode) {
+    console.log(`[PASS] Setelah aduan selesai, aduan baru di TPS yang sama berhasil: ${dupData2.kode}`);
+    // bersihkan agar TPS bebas untuk uji berikutnya
+    await adminClient.from('aduan').update({ status: 'selesai' }).eq('kode_tiket', dupData2.kode);
+  } else {
+    console.error('[FAIL] Aduan setelah selesai tidak berhasil:', dupRes2.status, dupData2);
+    process.exit(1);
+  }
   } else {
     console.error('[FAIL] UAT 1 gagal:', res1.status, data1);
     process.exit(1);
@@ -115,6 +212,7 @@ async function runUAT() {
   formBadPhone.append('nama_pelapor', 'Budi');
   formBadPhone.append('no_telepon', '12345'); // Format salah
   formBadPhone.append('deskripsi_lokasi', 'Jalan Ahmad Yani No 5 Kuningan');
+  formBadPhone.append('tps_id', defaultTpsId);
   formBadPhone.append('foto', new Blob([VALID_PNG_BYTES], { type: 'image/png' }), 'foto.png');
   formBadPhone.append('cf-turnstile-response', 'XXXX.DUMMY.TOKEN.XXXX');
 
@@ -137,6 +235,7 @@ async function runUAT() {
   formFakeExe.append('nama_pelapor', 'Attacker');
   formFakeExe.append('no_telepon', '081299998888');
   formFakeExe.append('deskripsi_lokasi', 'Jalan Linggajati No 1 Kuningan');
+  formFakeExe.append('tps_id', defaultTpsId);
   formFakeExe.append('foto', new Blob([FAKE_EXE_BYTES], { type: 'image/jpeg' }), 'malicious.jpg');
   formFakeExe.append('cf-turnstile-response', 'XXXX.DUMMY.TOKEN.XXXX');
 
@@ -157,8 +256,11 @@ async function runUAT() {
   // ----------------------------------------------------
   // UAT 3: Pembatasan Laju (Rate Limit) 5 Aduan / Jam per IP
   // ----------------------------------------------------
+  // Bebaskan TPS UAT 1 (dipakai UAT 1) agar uji rate limit tidak terblokir aturan TPS
+  await adminClient.from('aduan').update({ status: 'selesai' }).eq('kode_tiket', testTicketCode);
+
   console.log('\n--- UAT 3: Pembatasan Laju (5 aduan/jam per IP) ---');
-  const spamIp = '10.0.0.99';
+  const spamIp = '10.99.99.99';
   console.log(`Mengirim 5 aduan cepat dari IP ${spamIp}...`);
 
   for (let i = 1; i <= 5; i++) {
@@ -166,6 +268,7 @@ async function runUAT() {
     f.append('nama_pelapor', `Pelapor ${i}`);
     f.append('no_telepon', '081234567890');
     f.append('deskripsi_lokasi', `Lokasi penanganan sampah pengujian ke-${i}`);
+    f.append('tps_id', tpsIds[i - 1] || defaultTpsId);
     f.append('foto', new Blob([VALID_PNG_BYTES], { type: 'image/png' }), 'foto.png');
     f.append('cf-turnstile-response', 'XXXX.DUMMY.TOKEN.XXXX');
 
@@ -185,6 +288,7 @@ async function runUAT() {
   formSpam6.append('nama_pelapor', 'Pelapor Spam 6');
   formSpam6.append('no_telepon', '081234567890');
   formSpam6.append('deskripsi_lokasi', 'Lokasi penanganan sampah pengujian ke-6');
+  formSpam6.append('tps_id', tpsIds[5] || defaultTpsId);
   formSpam6.append('foto', new Blob([VALID_PNG_BYTES], { type: 'image/png' }), 'foto.png');
   formSpam6.append('cf-turnstile-response', 'XXXX.DUMMY.TOKEN.XXXX');
 

@@ -18,7 +18,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # Supabase temporary / local data
-backend/supabase/.temp/
+supabase/.temp/
+supabase/.branches/
 
 # OS files
 .DS_Store

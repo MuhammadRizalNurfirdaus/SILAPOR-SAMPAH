@@ -5,9 +5,9 @@ const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com;
   style-src 'self' 'unsafe-inline' https://unpkg.com;
-  img-src 'self' blob: data: https://*.supabase.co https://*.tile.openstreetmap.org https://tile.openstreetmap.org https://unpkg.com;
+  img-src 'self' blob: data: https://*.supabase.co http://127.0.0.1:54321 http://localhost:54321 https://*.tile.openstreetmap.org https://tile.openstreetmap.org https://unpkg.com;
   font-src 'self' data:;
-  connect-src 'self' https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com https://*.tile.openstreetmap.org;
+  connect-src 'self' https://*.supabase.co wss://*.supabase.co http://127.0.0.1:54321 http://localhost:54321 ws://127.0.0.1:54321 ws://localhost:54321 https://challenges.cloudflare.com https://*.tile.openstreetmap.org;
   frame-src 'self' https://challenges.cloudflare.com;
   object-src 'none';
   base-uri 'self';
@@ -25,6 +25,16 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "*.supabase.co",
+      },
+      {
+        protocol: "http",
+        hostname: "127.0.0.1",
+        port: "54321",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "54321",
       },
     ],
   },

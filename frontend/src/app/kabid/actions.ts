@@ -37,6 +37,12 @@ export async function kirimResponAduanAction(input: unknown) {
 
     if (insertError) {
       console.error('Error insert respon_aduan:', insertError);
+      if (insertError.code === '23505') {
+        return {
+          success: false,
+          error: 'TPS ini sudah memiliki aduan aktif lain. Selesaikan aduan tersebut terlebih dahulu sebelum mengubah status ini.',
+        };
+      }
       return {
         success: false,
         error: 'Gagal menyimpan respon aduan: ' + insertError.message,

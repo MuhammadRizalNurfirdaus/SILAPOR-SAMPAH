@@ -9,6 +9,7 @@ export function AdminNav() {
     pathname === '/admin' ||
     pathname.startsWith('/admin/armada') ||
     pathname.startsWith('/admin/pengguna');
+  const isTps = pathname.startsWith('/admin/tps');
   const isRetensi = pathname.startsWith('/admin/retensi');
 
   return (
@@ -22,6 +23,16 @@ export function AdminNav() {
         }`}
       >
         Data Armada dan Pengguna
+      </Link>
+      <Link
+        href="/admin/tps"
+        className={`px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors min-h-[38px] flex items-center ${
+          isTps
+            ? 'bg-primary-light text-primary-dark font-semibold'
+            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+        }`}
+      >
+        Data TPS
       </Link>
       <Link
         href="/admin/retensi"

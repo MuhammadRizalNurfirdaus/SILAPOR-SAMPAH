@@ -545,3 +545,135 @@ export async function jalankanRetensiAction(tahun: number = 2) {
   }
 }
 
+// ==========================================
+// ACTIONS TPS
+// ==========================================
+
+const tpsSchema = z.object({
+  nama: z.string().trim().min(2, 'Nama TPS minimal 2 karakter').max(100),
+  kecamatan: z.string().trim().min(2, 'Kecamatan minimal 2 karakter').max(100),
+  alamat: z.string().trim().max(300).optional().nullable(),
+  lat: z.number().nullable().optional(),
+  lng: z.number().nullable().optional(),
+  is_active: z.boolean().default(true),
+});
+
+export async function tambahTpsAction(input: unknown) {
+  try {
+    const { user: admin } = await requireRole(['admin']);
+    const v = tpsSchema.parse(input);
+
+    const { data, error } = await supabaseAdmin
+      .from('tps')
+      .insert({
+        nama: v.nama,
+        kecamatan: v.kecamatan,
+        alamat: v.alamat || null,
+        lat: v.lat ?? null,
+        lng: v.lng ?? null,
+        is_active: v.is_active,
+      })
+      .select()
+      .single();
+
+    if (error || !data) {
+      if (error?.code === '23505') {
+        return { success: false, error: 'TPS dengan nama tersebut sudah terdaftar di kecamatan ini.' };
+      }
+      return { success: false, error: 'Gagal menambahkan TPS: ' + error?.message };
+    }
+
+    await supabaseAdmin.from('audit_log').insert({
+      actor_id: admin.id,
+      aksi: 'tps.buat',
+      entitas: 'tps',
+      entitas_id: data.id,
+      detail: { nama: data.nama, kecamatan: data.kecamatan },
+    });
+
+    revalidatePath('/admin/tps');
+    return { success: true, message: `TPS ${data.nama} berhasil ditambahkan.` };
+  } catch (err: unknown) {
+    if (err instanceof z.ZodError) {
+      return { success: false, error: err.issues[0]?.message || 'Data tidak valid' };
+    }
+    const msg = err instanceof Error ? err.message : 'Terjadi kesalahan sistem';
+    return { success: false, error: msg };
+  }
+}
+
+export async function ubahTpsAction(id: string, input: unknown) {
+  try {
+    const { user: admin } = await requireRole(['admin']);
+    const v = tpsSchema.parse(input);
+
+    const { data, error } = await supabaseAdmin
+      .from('tps')
+      .update({
+        nama: v.nama,
+        kecamatan: v.kecamatan,
+        alamat: v.alamat || null,
+        lat: v.lat ?? null,
+        lng: v.lng ?? null,
+        is_active: v.is_active,
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error || !data) {
+      if (error?.code === '23505') {
+        return { success: false, error: 'TPS dengan nama tersebut sudah terdaftar di kecamatan ini.' };
+      }
+      return { success: false, error: 'Gagal mengubah TPS: ' + error?.message };
+    }
+
+    await supabaseAdmin.from('audit_log').insert({
+      actor_id: admin.id,
+      aksi: 'tps.ubah',
+      entitas: 'tps',
+      entitas_id: data.id,
+      detail: { nama: data.nama, kecamatan: data.kecamatan, is_active: data.is_active },
+    });
+
+    revalidatePath('/admin/tps');
+    return { success: true, message: `TPS ${data.nama} berhasil diubah.` };
+  } catch (err: unknown) {
+    if (err instanceof z.ZodError) {
+      return { success: false, error: err.issues[0]?.message || 'Data tidak valid' };
+    }
+    const msg = err instanceof Error ? err.message : 'Terjadi kesalahan sistem';
+    return { success: false, error: msg };
+  }
+}
+
+export async function nonaktifkanTpsAction(id: string) {
+  try {
+    const { user: admin } = await requireRole(['admin']);
+    const { data, error } = await supabaseAdmin
+      .from('tps')
+      .update({ is_active: false })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error || !data) {
+      return { success: false, error: 'Gagal menonaktifkan TPS: ' + error?.message };
+    }
+
+    await supabaseAdmin.from('audit_log').insert({
+      actor_id: admin.id,
+      aksi: 'tps.nonaktif',
+      entitas: 'tps',
+      entitas_id: data.id,
+      detail: { nama: data.nama, kecamatan: data.kecamatan },
+    });
+
+    revalidatePath('/admin/tps');
+    return { success: true, message: `TPS ${data.nama} dinonaktifkan.` };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Terjadi kesalahan sistem';
+    return { success: false, error: msg };
+  }
+}
+

@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import imageCompression from 'browser-image-compression';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
@@ -32,13 +33,46 @@ export function FormAduan() {
   const [honeypot, setHoneypot] = useState('');
   const [pernyataanBenar, setPernyataanBenar] = useState(false);
 
+  // TPS (lokasi)
+  interface TpsItem {
+    id: string;
+    nama: string;
+    kecamatan: string;
+    alamat: string | null;
+  }
+  const [tpsList, setTpsList] = useState<TpsItem[]>([]);
+  const [isLoadingTps, setIsLoadingTps] = useState(true);
+  const [selectedKecamatan, setSelectedKecamatan] = useState('');
+  const [selectedTpsId, setSelectedTpsId] = useState('');
+
   // UI status states
   const [isLoading, setIsLoading] = useState(false);
   const [isCompressing, setIsCompressing] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [duplicateTps, setDuplicateTps] = useState(false);
+  const [triedSubmit, setTriedSubmit] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const errorSummaryRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/public/tps');
+        if (!res.ok) throw new Error('gagal');
+        const data = (await res.json()) as TpsItem[];
+        if (!cancelled) setTpsList(data ?? []);
+      } catch {
+        if (!cancelled) setTpsList([]);
+      } finally {
+        if (!cancelled) setIsLoadingTps(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Kompresi foto otomatis di klien sebelum kirim
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,6 +119,8 @@ export function FormAduan() {
     e.preventDefault();
     setIsLoading(true);
     setErrors({});
+    setDuplicateTps(false);
+    setTriedSubmit(true);
 
     // Validasi dasar klien
     if (!fotoFile) {
@@ -107,10 +143,20 @@ export function FormAduan() {
       return;
     }
 
+    if (!selectedTpsId) {
+      setErrors({
+        global: 'Pilih TPS lokasi tumpukan sampah terlebih dahulu.',
+      });
+      setIsLoading(false);
+      errorSummaryRef.current?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
     const formData = new FormData();
     formData.append('nama_pelapor', namaPelapor);
     formData.append('no_telepon', noTelepon);
     formData.append('deskripsi_lokasi', deskripsiLokasi);
+    formData.append('tps_id', selectedTpsId);
     formData.append('foto', fotoFile);
     formData.append('cf-turnstile-response', turnstileToken || 'XXXX.DUMMY.TOKEN.XXXX');
     if (honeypot) {
@@ -126,6 +172,15 @@ export function FormAduan() {
       const data = await res.json();
 
       if (!res.ok) {
+        if (data.code === 'TPS_AKTIF') {
+          setDuplicateTps(true);
+          setErrors({
+            global: data.message || 'Masih ada aduan aktif di TPS ini. Silakan cek status penanganannya.',
+          });
+          errorSummaryRef.current?.scrollIntoView({ behavior: 'smooth' });
+          setIsLoading(false);
+          return;
+        }
         // Layar 04b: Data atau ukuran foto tidak valid
         setErrors({
           global: data.message || 'Data atau ukuran foto tidak valid',
@@ -154,6 +209,11 @@ export function FormAduan() {
       setIsLoading(false);
     }
   };
+
+  const kecamatanOptions = Array.from(new Set(tpsList.map((t) => t.kecamatan))).sort(
+    (a, b) => a.localeCompare(b, 'id')
+  );
+  const filteredTps = tpsList.filter((t) => t.kecamatan === selectedKecamatan);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -225,6 +285,78 @@ export function FormAduan() {
           disabled={isLoading}
         />
       </div>
+
+      {/* Field: Kecamatan & TPS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+        <div className="space-y-1.5">
+          <Select
+            label="Kecamatan"
+            id="kecamatan"
+            value={selectedKecamatan}
+            onChange={(e) => {
+              setSelectedKecamatan(e.target.value);
+              setSelectedTpsId('');
+            }}
+            requiredIndicator
+            required
+            disabled={isLoading || isLoadingTps}
+            error={triedSubmit && !selectedKecamatan ? 'Pilih kecamatan' : undefined}
+            helperText={isLoadingTps ? 'Memuat data TPS...' : 'Pilih kecamatan lokasi TPS'}
+          >
+            <option value="">Pilih kecamatan</option>
+            {kecamatanOptions.map((k) => (
+              <option key={k} value={k}>
+                {k}
+              </option>
+            ))}
+          </Select>
+        </div>
+        <div className="space-y-1.5">
+          <Select
+            label="Lokasi TPS"
+            id="tps_id"
+            name="tps_id"
+            value={selectedTpsId}
+            onChange={(e) => setSelectedTpsId(e.target.value)}
+            requiredIndicator
+            required
+            disabled={isLoading || isLoadingTps || !selectedKecamatan}
+            error={triedSubmit && !selectedTpsId ? 'Pilih TPS' : undefined}
+            helperText={
+              !selectedKecamatan
+                ? 'Pilih kecamatan terlebih dahulu'
+                : filteredTps.length === 0
+                ? 'Belum ada TPS terdaftar di kecamatan ini'
+                : selectedTpsId
+                ? filteredTps.find((t) => t.id === selectedTpsId)?.alamat || 'Pilih TPS lokasi tumpukan sampah'
+                : 'Tempat Pembuangan Sementara di kecamatan terpilih'
+            }
+          >
+            <option value="">Pilih TPS</option>
+            {filteredTps.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.nama}
+              </option>
+            ))}
+          </Select>
+        </div>
+      </div>
+
+      {/* Pesan khusus jika TPS masih punya aduan aktif */}
+      {duplicateTps && (
+        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 space-y-3">
+          <p className="text-sm font-semibold text-amber-900">
+            {errors.global || 'Masih ada aduan aktif di TPS ini. Silakan cek status penanganannya.'}
+          </p>
+          <button
+            type="button"
+            onClick={() => router.push('/cek-status')}
+            className="inline-flex items-center justify-center rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700 transition-colors"
+          >
+            Cek Status Aduan
+          </button>
+        </div>
+      )}
 
       {/* Field: Deskripsi Lokasi */}
       <div>

@@ -134,6 +134,17 @@ npm install
 cp .env.local.example .env.local
 ```
 
+### 3. Opsi Supabase Lokal (tanpa cloud, butuh Docker Desktop)
+```bash
+# Dari root repo
+npm run supabase:start      # terapkan migrasi + seed
+npm run supabase:status     # salin anon key & service_role key ke frontend/.env.local
+node frontend/scripts/seed-and-test-auth.mjs   # buat akun admin/kabid/sopir1
+npm run dev                 # http://localhost:3002
+```
+
+`frontend/.env.local` untuk lokal memakai `NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:54321"`.
+
 ---
 
 ## 🔑 Environment Variables

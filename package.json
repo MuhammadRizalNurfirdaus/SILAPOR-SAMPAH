@@ -11,12 +11,13 @@
     "build": "npm run build --prefix frontend",
     "start": "npm run start --prefix frontend",
     "lint": "npm run lint --prefix frontend",
-    "supabase:types": "cd backend && npx supabase gen types typescript --linked > ../frontend/src/types/database.types.ts",
-    "supabase:status": "cd backend && npx supabase status",
-    "supabase:start": "cd backend && npx supabase start",
-    "supabase:stop": "cd backend && npx supabase stop"
+    "supabase:types": "npx supabase gen types typescript --local > frontend/src/types/database.types.ts",
+    "supabase:status": "npx supabase status",
+    "supabase:start": "npx supabase start",
+    "supabase:stop": "npx supabase stop"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "supabase": "^3.2.0"
   }
 }

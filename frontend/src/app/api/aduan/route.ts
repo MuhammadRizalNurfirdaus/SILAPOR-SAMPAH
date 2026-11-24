@@ -35,6 +35,7 @@ export async function POST(req: Request) {
       nama_pelapor: form.get('nama_pelapor'),
       no_telepon: form.get('no_telepon'),
       deskripsi_lokasi: form.get('deskripsi_lokasi'),
+      tps_id: form.get('tps_id'),
     });
 
     // 4. Validasi file foto (ukuran & magic bytes)
@@ -57,6 +58,37 @@ export async function POST(req: Request) {
           foto: !ext ? 'Foto wajib, format JPG/PNG/WebP, maksimal 5 MB' : undefined,
         },
         { status: 422 }
+      );
+    }
+
+    // 5a. Pastikan TPS aktif dan belum punya aduan aktif
+    const { data: tpsRow, error: tpsErr } = await supabaseAdmin
+      .from('tps')
+      .select('id, is_active')
+      .eq('id', parsed.data.tps_id)
+      .single();
+
+    if (tpsErr || !tpsRow || !tpsRow.is_active) {
+      return NextResponse.json(
+        { ok: false, message: 'TPS tidak ditemukan atau sudah nonaktif' },
+        { status: 422 }
+      );
+    }
+
+    const { count: activeCount, error: activeErr } = await supabaseAdmin
+      .from('aduan')
+      .select('id', { count: 'exact', head: true })
+      .eq('tps_id', parsed.data.tps_id)
+      .in('status', ['baru', 'diproses']);
+
+    if (!activeErr && (activeCount ?? 0) > 0) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: 'TPS_AKTIF',
+          message: 'Masih ada aduan aktif di TPS ini. Silakan cek status penanganannya.',
+        },
+        { status: 409 }
       );
     }
 
@@ -107,6 +139,7 @@ export async function POST(req: Request) {
         deskripsi_lokasi: parsed.data.deskripsi_lokasi,
         foto_path: filePath,
         ip_hash: ipHash,
+        tps_id: parsed.data.tps_id,
       })
       .select('kode_tiket')
       .single();
@@ -115,6 +148,17 @@ export async function POST(req: Request) {
       console.error('Database insert error:', error);
       // Rollback file jika insert database gagal
       await supabaseAdmin.storage.from('aduan-foto').remove([filePath]);
+      // Bentrok unique index uq_aduan_tps_aktif (race condition)
+      if (error.code === '23505' && (error.message || '').toLowerCase().includes('tps')) {
+        return NextResponse.json(
+          {
+            ok: false,
+            code: 'TPS_AKTIF',
+            message: 'Masih ada aduan aktif di TPS ini. Silakan cek status penanganannya.',
+          },
+          { status: 409 }
+        );
+      }
       return NextResponse.json(
         { ok: false, message: 'Gagal menyimpan aduan' },
         { status: 500 }
