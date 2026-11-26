@@ -76,7 +76,7 @@ export function ClientSuccessCard({ kode }: ClientSuccessCardProps) {
       <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg border border-gray-100 text-left space-y-1">
         <p className="font-semibold text-gray-700">Catatan untuk Pelapor:</p>
         <p>
-          Simpan nomor laporan aduan di atas untuk mengecek perkembangan penanganan dan respon resmi petugas pengangkut sampah.
+          Simpan nomor laporan aduan di atas untuk mengecek perkembangan penanganan dan respon resmi petugas pengangkut TPS.
         </p>
       </div>
 

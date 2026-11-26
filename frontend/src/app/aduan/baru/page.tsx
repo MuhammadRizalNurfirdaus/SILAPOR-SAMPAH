@@ -8,7 +8,7 @@ import { FormAduan } from './FormAduan';
 export const metadata: Metadata = {
   title: 'Buat Aduan Sampah | SILAPOR SAMPAH DLH Kuningan',
   description:
-    'Laporkan tumpukan sampah liar di lingkungan Anda kepada Dinas Lingkungan Hidup Kabupaten Kuningan.',
+    'Laporkan TPS yang belum diangkut di lingkungan Anda kepada Dinas Lingkungan Hidup Kabupaten Kuningan.',
 };
 
 export default function BuatAduanPage() {
@@ -34,7 +34,7 @@ export default function BuatAduanPage() {
                 Formulir Aduan Sampah
               </h1>
               <p className="text-xs sm:text-sm text-gray-600">
-                Isi data dan lampirkan foto tumpukan sampah agar armada pengangkut dapat segera menindaklanjuti.
+                Pilih TPS yang belum diangkut dan lampirkan foto kondisinya agar armada pengangkut dapat segera menindaklanjuti.
               </p>
             </div>
 

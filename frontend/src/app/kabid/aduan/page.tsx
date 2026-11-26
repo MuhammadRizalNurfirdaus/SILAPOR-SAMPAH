@@ -10,7 +10,7 @@ import { KabariWAButton } from '@/components/ui/KabariWAButton';
 
 export const metadata: Metadata = {
   title: 'Daftar Aduan Masyarakat | SILAPOR SAMPAH DLH Kuningan',
-  description: 'Pengelolaan dan respon terhadap laporan tumpukan sampah masyarakat Kabupaten Kuningan.',
+  description: 'Pengelolaan dan respon terhadap laporan TPS yang belum diangkut masyarakat Kabupaten Kuningan.',
 };
 
 export const dynamic = 'force-dynamic';
@@ -178,7 +178,7 @@ export default async function KabidDaftarAduanPage({ searchParams }: PageProps) 
             Daftar Aduan Masyarakat
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Kelola laporan tumpukan sampah dari warga dan berikan respon tindak lanjut.
+            Kelola laporan TPS yang belum diangkut dari warga dan berikan respon tindak lanjut.
           </p>
         </div>
         <div className="text-xs font-medium text-gray-600 bg-surface px-3 py-1.5 rounded-lg border border-gray-200 self-start sm:self-auto">

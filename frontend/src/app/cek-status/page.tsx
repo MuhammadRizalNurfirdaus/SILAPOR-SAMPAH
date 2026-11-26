@@ -8,7 +8,7 @@ import { CekStatusForm } from './CekStatusForm';
 export const metadata: Metadata = {
   title: 'Cek Status Aduan | SILAPOR SAMPAH DLH Kuningan',
   description:
-    'Lacak status tindak lanjut penanganan aduan sampah Anda dengan memasukkan nomor laporan aduan.',
+    'Lacak status tindak lanjut penanganan laporan TPS Anda dengan memasukkan nomor laporan aduan.',
 };
 
 export default function CekStatusPage() {
@@ -30,7 +30,7 @@ export default function CekStatusPage() {
 
           <div className="mb-6 space-y-1">
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
-              Cek Status Aduan Sampah
+              Cek Status Laporan TPS
             </h1>
             <p className="text-xs sm:text-sm text-gray-600">
               Masukkan nomor laporan aduan Anda untuk melihat perkembangan proses pengangkutan oleh petugas DLH Kuningan.

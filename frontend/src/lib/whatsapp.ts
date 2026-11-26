@@ -74,10 +74,10 @@ export function generateWhatsAppAduanUrl({
   const statusLabel = statusTextMap[status] || status;
   const trackingUrl = `${origin.replace(/\/$/, '')}/cek-status?kode=${encodeURIComponent(kodeTiket)}`;
 
-  let pesan = `*PEMBERITAHUAN STATUS LAPORAN ADUAN SAMPAH*\n`;
+  let pesan = `*PEMBERITAHUAN STATUS LAPORAN ADUAN TPS*\n`;
   pesan += `*Dinas Lingkungan Hidup Kabupaten Kuningan*\n\n`;
   pesan += `Halo Bpk/Ibu *${namaPelapor || 'Masyarakat'}*,\n\n`;
-  pesan += `Terima kasih atas laporan aduan tumpukan sampah yang Anda sampaikan. Berikut adalah pembaruan status terbaru dari Kepala Bidang Pengelolaan Sampah:\n\n`;
+  pesan += `Terima kasih atas laporan aduan TPS yang belum diangkut yang Anda sampaikan. Berikut adalah pembaruan status terbaru dari Kepala Bidang Pengelolaan Sampah:\n\n`;
   pesan += `🎫 *Nomor Laporan Aduan:* \`${kodeTiket}\`\n`;
   pesan += `📊 *Status Laporan:* *${statusLabel}*\n`;
 

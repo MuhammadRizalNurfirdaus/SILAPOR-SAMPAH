@@ -145,7 +145,7 @@ export function FormAduan() {
 
     if (!selectedTpsId) {
       setErrors({
-        global: 'Pilih TPS lokasi tumpukan sampah terlebih dahulu.',
+        global: 'Pilih TPS yang belum diangkut terlebih dahulu.',
       });
       setIsLoading(false);
       errorSummaryRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -328,7 +328,7 @@ export function FormAduan() {
                 : filteredTps.length === 0
                 ? 'Belum ada TPS terdaftar di kecamatan ini'
                 : selectedTpsId
-                ? filteredTps.find((t) => t.id === selectedTpsId)?.alamat || 'Pilih TPS lokasi tumpukan sampah'
+                ? filteredTps.find((t) => t.id === selectedTpsId)?.alamat || 'Pilih TPS yang belum diangkut'
                 : 'Tempat Pembuangan Sementara di kecamatan terpilih'
             }
           >
@@ -361,19 +361,19 @@ export function FormAduan() {
       {/* Field: Deskripsi Lokasi */}
       <div>
         <Textarea
-          label="Deskripsi Lokasi Sampah"
+          label="Keterangan Kondisi TPS"
           id="deskripsi_lokasi"
           name="deskripsi_lokasi"
           rows={3}
           value={deskripsiLokasi}
           onChange={(e) => setDeskripsiLokasi(e.target.value)}
-          placeholder="Tuliskan alamat jelas, patokan terdekat, RT/RW, kelurahan/desa, atau kecamatan di Kuningan..."
+          placeholder="Contoh: TPS penuh sejak 3 hari, sampah meluber ke jalan, bau menyengat..."
           requiredIndicator
           required
           minLength={10}
           maxLength={500}
           error={errors.deskripsi_lokasi?.[0]}
-          helperText="Minimal 10 karakter. Berikan patokan agar armada mudah menemukan lokasi."
+          helperText="Minimal 10 karakter. Jelaskan kondisi TPS agar armada mudah menilai kebutuhan pengangkutan."
           disabled={isLoading}
         />
       </div>
@@ -381,7 +381,7 @@ export function FormAduan() {
       {/* Field: Unggah Foto Sampah */}
       <div className="space-y-2">
         <label className="text-sm font-semibold text-gray-800 flex items-center gap-1">
-          Foto Bukti Tumpukan Sampah
+          Foto Kondisi TPS
           <span className="text-danger">*</span>
         </label>
 

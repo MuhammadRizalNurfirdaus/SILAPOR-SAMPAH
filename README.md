@@ -7,7 +7,7 @@
 [![Supabase](https://img.shields.io/badge/Supabase-Database%20%26%20Auth-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com/)
 [![Leaflet](https://img.shields.io/badge/Leaflet-Realtime%20Maps-199900?style=for-the-badge&logo=leaflet)](https://leafletjs.com/)
 
-Aplikasi web modern, mobile-first, dan responsif (320–1920 px) yang dikembangkan untuk **Dinas Lingkungan Hidup (DLH) Kabupaten Kuningan** guna memudahkan masyarakat melaporkan titik timbulan sampah liar secara transparan, serta mengoptimalkan operasional dan pemantauan penugasan armada pengangkutan sampah secara realtime.
+Aplikasi web modern, mobile-first, dan responsif (320–1920 px) yang dikembangkan untuk **Dinas Lingkungan Hidup (DLH) Kabupaten Kuningan** guna memudahkan masyarakat melaporkan TPS yang belum diangkut secara transparan, serta mengoptimalkan operasional dan pemantauan penugasan armada pengangkutan sampah secara realtime.
 
 ---
 

@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Aduan Berhasil Dikirim | SILAPOR SAMPAH DLH Kuningan',
-  description: 'Aduan sampah Anda telah berhasil dicatat ke dalam sistem.',
+  description: 'Laporan TPS Anda telah berhasil dicatat ke dalam sistem.',
 };
 
 type Props = {

@@ -87,7 +87,7 @@ export default function Home() {
                 <div>
                   <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">Buat Aduan</h2>
                   <p className="mt-1.5 text-sm text-gray-600 leading-relaxed">
-                    Laporkan tumpukan sampah liar yang belum terangkut dengan melampirkan foto bukti lokasi secara langsung.
+                    Laporkan TPS yang belum diangkut dengan melampirkan foto kondisi terkini secara langsung.
                   </p>
                 </div>
               </div>
@@ -156,7 +156,7 @@ export default function Home() {
                 <div>
                   <h3 className="text-base font-bold text-gray-900 mb-1.5">Foto & Lokasi</h3>
                   <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                    Warga mengambil foto bukti tumpukan sampah, mengisi patokan lokasi, dan mengirim aduan tanpa login.
+                    Warga memilih TPS, mengambil foto kondisi, dan mengirim aduan tanpa login.
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-gray-200/60 text-[11px] text-gray-500 font-medium">
@@ -250,7 +250,7 @@ export default function Home() {
               </div>
               <h3 className="text-base font-bold text-gray-900 mb-2">100% Bebas Biaya</h3>
               <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                Pelaporan sampah liar dan fasilitas publik melalui SILAPOR SAMPAH tidak dipungut biaya apapun bagi warga Kuningan.
+                Pelaporan TPS yang belum diangkut melalui SILAPOR SAMPAH tidak dipungut biaya apapun bagi warga Kuningan.
               </p>
             </div>
 
@@ -334,8 +334,8 @@ export default function Home() {
                   </span>
                 </summary>
                 <p className="mt-3 text-xs sm:text-sm text-gray-600 leading-relaxed pt-2 border-t border-gray-200/60">
-                  Tumpukan sampah liar di tepi jalan umum, pembuangan sampah ilegal di bantaran sungai/lahan kosong,
-                  dan TPS (Tempat Pembuangan Sementara) resmi yang mengalami kelebihan kapasitas yang belum terangkut.
+                  Aduan difokuskan pada TPS (Tempat Pembuangan Sementara) resmi yang belum diangkut
+                  atau mengalami kelebihan kapasitas.
                 </p>
               </details>
 
@@ -403,10 +403,10 @@ export default function Home() {
               <div className="bg-bg/60 border border-primary/20 rounded-2xl p-6 sm:p-8 flex flex-col justify-between gap-6 text-center lg:text-left">
                 <div>
                   <h3 className="text-lg font-bold text-primary-dark">
-                    Lihat Lokasi Tumpukan Sampah di Sekitar Anda?
+                    Ada TPS yang Belum Diangkut di Sekitar Anda?
                   </h3>
                   <p className="mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">
-                    Jangan biarkan lingkungan kita tercemar. Laporkan segera agar tim armada DLH Kuningan dapat menjadwalkan pembersihan.
+                    Jangan biarkan TPS penuh menumpuk. Laporkan segera agar tim armada DLH Kuningan dapat menjadwalkan pengangkutan.
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">

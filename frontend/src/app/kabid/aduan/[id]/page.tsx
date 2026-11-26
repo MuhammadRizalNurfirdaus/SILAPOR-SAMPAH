@@ -12,7 +12,7 @@ import { FormResponAduan } from './FormResponAduan';
 
 export const metadata: Metadata = {
   title: 'Detail & Respon Aduan | SILAPOR SAMPAH DLH Kuningan',
-  description: 'Tindak lanjut laporan aduan tumpukan sampah masyarakat Kabupaten Kuningan.',
+  description: 'Tindak lanjut laporan aduan TPS yang belum diangkut masyarakat Kabupaten Kuningan.',
 };
 
 export const dynamic = 'force-dynamic';
