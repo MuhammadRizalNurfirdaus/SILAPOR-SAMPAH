@@ -74,10 +74,7 @@ export default function Home() {
             </Card>
 
             {/* Card 2: Buat Aduan (Utama) */}
-            <Card className="flex flex-col justify-between p-6 sm:p-7 border-2 border-primary/50 shadow-md hover:shadow-xl transition-all relative overflow-hidden bg-surface">
-              <div className="absolute top-0 right-0 bg-primary text-white text-[11px] font-bold px-3 py-1 rounded-bl-xl tracking-wide uppercase">
-                Utama
-              </div>
+            <Card className="flex flex-col justify-between p-6 sm:p-7 border-2 border-primary/50 shadow-md hover:shadow-xl transition-all bg-surface">
               <div className="flex flex-col gap-3.5">
                 <div className="w-12 h-12 rounded-xl bg-primary text-white flex items-center justify-center shrink-0 shadow-sm">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
